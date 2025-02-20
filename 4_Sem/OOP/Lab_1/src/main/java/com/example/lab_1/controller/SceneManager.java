@@ -18,7 +18,6 @@ public class SceneManager {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
-
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -27,7 +26,7 @@ public class SceneManager {
 
     public void showRegistrationScene() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/ui/RegistrationPage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/RegistrationPage.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
