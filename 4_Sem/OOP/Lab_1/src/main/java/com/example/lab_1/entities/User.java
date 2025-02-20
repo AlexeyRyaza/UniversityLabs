@@ -56,44 +56,45 @@ public class User {
         private String password;
 
 
-        public T lastName(String lastName) {
+        public Builder lastName(String lastName) {
             this.lastName = lastName;
-            return self();
+            return this;
         }
 
-        public T firstName(String firstName) {
+        public Builder firstName(String firstName) {
             this.firstName = firstName;
-            return self();
+            return this;
         }
 
-        public T fatherName(String fatherName) {
+        public Builder fatherName(String fatherName) {
             this.fatherName = fatherName;
-            return self();
+            return this;
         }
 
-        public T email(String email) {
+        public Builder email(String email) {
             this.email = email;
-            return self();
+            return this;
         }
 
-        public T phone(String phone) {
+        public Builder phone(String phone) {
             this.phone = phone;
-            return self();
+            return this;
         }
 
-        public T passport(String passport) {
+        public Builder passport(String passport) {
             this.passport = passport;
-            return self();
+            return this;
         }
 
-        public T password(String password) {
+        public Builder password(String password) {
             this.password = password;
-            return self();
+            return this;
         }
 
-        protected abstract T self();
 
-        public abstract User build();
+        public User build(){
+            return new User(this);
+        }
     }
     //=================================================
 
