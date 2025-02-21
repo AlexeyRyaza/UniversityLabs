@@ -3,21 +3,14 @@ package com.example.lab_1.controller;
 import com.example.lab_1.Main;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
-public class LoginController {
+public class InitialController {
     @FXML
-    private TextField TF_Number;
-
-    @FXML
-    private TextField TF_Password;
-
-    @FXML
-    private Label L_Redirection;
+    private Label WelcomeLabel;
 
     @FXML
     protected void onLoginBtnClicked(){
-        Main.getInstance().showBankSelectionScene();
+        Main.getInstance().showLoginScene();
     }
     @FXML
     protected void onSignUpBtnClicked(){

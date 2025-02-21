@@ -1,0 +1,7 @@
+.bank-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #007ACC;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}

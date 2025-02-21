@@ -21,7 +21,7 @@ public class Bank {
     private Map<Integer, Admin>  admins = new HashMap<>();
 
 
-    Bank(int id, String name, String UNP, String address) {
+    public Bank(String name, String UNP, String address) {
         this.id = ID_GENERATOR.getAndIncrement();
         this.name = name;
         this.UNP = UNP;
