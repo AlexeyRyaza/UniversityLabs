@@ -1,9 +1,12 @@
 package com.example.lab_1;
 
+//MyCluster
+//Administrator
+//123456
+
+import com.example.lab_1.infrastructure.CouchbaseConnection;
 import com.example.lab_1.controller.SceneManager;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,6 +26,10 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        CouchbaseConnection.initialize();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(CouchbaseConnection::disconnect));
+
         launch();
     }
 }

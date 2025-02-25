@@ -1,5 +1,9 @@
 package com.example.lab_1.entities;
 
+import com.couchbase.client.core.deps.com.fasterxml.jackson.annotation.JsonProperty;
+import com.couchbase.client.core.deps.com.fasterxml.jackson.annotation.JsonIgnore;
+import com.couchbase.client.core.deps.com.fasterxml.jackson.core.JsonProcessingException;
+import com.couchbase.client.core.deps.com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.lab_1.entities.Enums.Role;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,28 +13,29 @@ import java.util.Map;
 public class User {
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
 
-    private String lastName;
-    private String firstName;
-    private String fatherName;
-    private String email;
-    private String phone;
-    private String passport;
+    private final String lastName;
+    private final String firstName;
+    private final String fatherName;
+    private final String email;
+    private final String phone;
+    private final String passport;
     private String password;
 
     private final int id;
 
-    private Map<Bank, Role> bankRoles = new HashMap<>();
+    private Map<String, Role> bankRoles = new HashMap<>();
+    //private Map<Bank, Role> bankRoles = new HashMap<>();
 
-    public void addBank(Bank bank) {
-        bankRoles.putIfAbsent(bank, null);
+    public void addBank(String bankId) {
+        bankRoles.putIfAbsent(bankId, null);
     }
 
-    public void registerInBank(Bank bank, Role role) {
-        bankRoles.put(bank, role);
+    public void registerInBank(String bankId, Role role) {
+        bankRoles.put(bankId, role);
     }
 
-    public Role getRoleInBank(Bank bank) {
-        return bankRoles.get(bank);
+    public Role getRoleInBank(String bankId) {
+        return bankRoles.get(bankId);
     }
 
     //Builder realization
@@ -100,6 +105,7 @@ public class User {
 
     //Getters and Setters
     //==================================================
+    @JsonProperty
     public String getPassword() {
         return password;
     }
@@ -108,54 +114,37 @@ public class User {
         this.password = password;
     }
 
+    @JsonProperty
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
+    @JsonProperty
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
+    @JsonProperty
     public String getFatherName() {
         return fatherName;
     }
 
-    public void setFatherName(String fatherName) {
-        this.fatherName = fatherName;
-    }
-
+    @JsonProperty
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    @JsonProperty
     public String getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
+    @JsonProperty
     public String getPassport() {
         return passport;
     }
 
-    public void setPassport(String passport) {
-        this.passport = passport;
-    }
-
+    @JsonProperty
     public int getId() {
         return id;
     }
@@ -163,14 +152,16 @@ public class User {
 
     // Метод для автоматического логина во всех банках, где роль задана //TODO Auto-login in existing accounts
     public void loginToBanks() {
-        for (Map.Entry<Bank, Role> entry : bankRoles.entrySet()) {
-            Bank bank = entry.getKey();
-            Role role = entry.getValue();
-            if (role != null) {
-                // Здесь можно вызвать метод, который выполнит процесс логина.
-                // Например, bank.loginUser(this, role);
 
-            }
+    }
+
+    @JsonIgnore
+    public String toJson() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации User в JSON", e);
         }
     }
 }

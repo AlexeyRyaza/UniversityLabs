@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BankSelectionController {
-
     @FXML
     private VBox BanksContainer;
 
@@ -45,7 +44,7 @@ public class BankSelectionController {
     private Button createBankButton(String buttonText) {
         Button button = new Button(buttonText);
 
-        button.getStyleClass().add("/com/example/lab_1/bank-button.css");
+        button.getStyleClass().add("bank-button");
 
         button.setOnAction(event -> {
             System.out.println("Выбран банк: " + buttonText);
