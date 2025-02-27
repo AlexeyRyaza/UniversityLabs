@@ -4,6 +4,7 @@ import com.example.lab_1.entities.User;
 import com.example.lab_1.repositories.CouchbaseUserRepository;
 import com.example.lab_1.repositories.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UserService {
@@ -23,6 +24,14 @@ public class UserService {
 
     //Methods
     //=======================================
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public Optional<User> getUserById(String id) {
+        return userRepository.findById(id);
+    }
+
     public void saveUser(User user) {
         userRepository.save(user);
         System.out.println("Пользователь сохранён в БД: " + user);

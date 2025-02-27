@@ -2,6 +2,8 @@ package com.example.lab_1.controller;
 
 import com.example.lab_1.Main;
 import com.example.lab_1.entities.Bank;
+import com.example.lab_1.entities.User;
+import com.example.lab_1.services.UserService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -42,6 +44,16 @@ public class BankSelectionController {
     }
 
     private Button createBankButton(String buttonText) {
+        UserService.getInstance().getAllUsers().forEach(user -> {
+            System.out.println(user.getFirstName() + " " + user.getPhone());
+        });
+
+        UserService.getInstance().getUserById("2").ifPresent(user -> {
+            System.out.println(user.getFirstName() + " " + user.getEmail());
+        });
+
+
+
         Button button = new Button(buttonText);
 
         button.getStyleClass().add("bank-button");

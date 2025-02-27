@@ -1,9 +1,10 @@
 package com.example.lab_1.entities;
 
-import com.couchbase.client.core.deps.com.fasterxml.jackson.annotation.JsonProperty;
-import com.couchbase.client.core.deps.com.fasterxml.jackson.annotation.JsonIgnore;
-import com.couchbase.client.core.deps.com.fasterxml.jackson.core.JsonProcessingException;
-import com.couchbase.client.core.deps.com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.lab_1.entities.Enums.Role;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,11 +21,44 @@ public class User {
     private final String phone;
     private final String passport;
     private String password;
-
     private final int id;
 
     private Map<String, Role> bankRoles = new HashMap<>();
-    //private Map<Bank, Role> bankRoles = new HashMap<>();
+
+    public User() {
+        this.lastName = "";
+        this.firstName = "";
+        this.fatherName = "";
+        this.email = "";
+        this.phone = "";
+        this.passport = "";
+        this.password = "";
+        this.id = -1;
+        this.bankRoles = new HashMap<>();
+    }
+
+    @JsonCreator
+    public User(
+            @JsonProperty("lastName") String lastName,
+            @JsonProperty("firstName") String firstName,
+            @JsonProperty("fatherName") String fatherName,
+            @JsonProperty("email") String email,
+            @JsonProperty("phone") String phone,
+            @JsonProperty("passport") String passport,
+            @JsonProperty("password") String password,
+            @JsonProperty("id") int id,
+            @JsonProperty("bankRoles") Map<String, Role> bankRoles
+    ) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.fatherName = fatherName;
+        this.email = email;
+        this.phone = phone;
+        this.passport = passport;
+        this.password = password;
+        this.id = id;
+        this.bankRoles = bankRoles != null ? bankRoles : new HashMap<>();
+    }
 
     public void addBank(String bankId) {
         bankRoles.putIfAbsent(bankId, null);

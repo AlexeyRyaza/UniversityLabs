@@ -15,6 +15,8 @@ import java.util.ArrayList;
 public class CouchbaseUserRepository implements UserRepository {
     private final Bucket bucket;
     private final Collection collection;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     public CouchbaseUserRepository() {
         this.bucket = CouchbaseConnection.getBucket();
@@ -24,16 +26,20 @@ public class CouchbaseUserRepository implements UserRepository {
 
     @Override
     public void save(User user) {
-        collection.upsert(String.valueOf(user.getId()), user.toJson());
-        //collection.upsert(String.valueOf(user.getId()), user.toJson());
+        try {
+            collection.upsert(String.valueOf(user.getId()), user.toJson());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public Optional<User> findById(String id) {
         try {
-            GetResult result = collection.get(id);
+            GetResult result = bucket.scope("_default").collection("users").get(id);
+            //GetResult result = collection.get(id);
             String json = result.contentAs(String.class);
-            ObjectMapper objectMapper = new ObjectMapper();
             User user = objectMapper.readValue(json, User.class);
             return Optional.of(user);
         } catch (Exception e) {
@@ -44,16 +50,38 @@ public class CouchbaseUserRepository implements UserRepository {
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        String query = "SELECT u.* FROM `" + bucket.name() + "` u";
-        QueryResult result = CouchbaseConnection.getCluster().query(query);
-        result.rowsAsObject().forEach(row -> {
-            // TODO parse json to user
-        });
+        String query = "SELECT u.* FROM `Lab_1`.`_default`.`users` u";
+
+        try{
+            QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+            result.rowsAsObject().forEach(row -> {
+                try {
+                   String json = row.toString();
+
+                   User user = objectMapper.readValue(json, User.class);
+                   users.add(user);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         return users;
     }
 
     @Override
     public void delete(String id) {
-        collection.remove(id);
+        try {
+            collection.remove(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
