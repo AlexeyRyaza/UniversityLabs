@@ -1,4 +1,4 @@
-package com.example.lab_1.services;
+package com.example.lab_1.infrastructure;
 
 public class Validator {
     private Validator() {}
@@ -12,7 +12,7 @@ public class Validator {
     }
 
     public static boolean isValidPhoneNumber(String phone) {
-        return phone != null && phone.matches("^\\+\\d{11,15}$");
+        return phone != null && phone.matches("^\\+\\d{9,15}$");
     }
 
      public static boolean isValidName(String name) {

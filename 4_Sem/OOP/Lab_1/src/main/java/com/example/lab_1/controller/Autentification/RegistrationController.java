@@ -1,14 +1,12 @@
-package com.example.lab_1.controller;
+package com.example.lab_1.controller.Autentification;
 
 import com.example.lab_1.Main;
-import com.example.lab_1.services.Validator;
+import com.example.lab_1.services.UserService;
+import com.example.lab_1.infrastructure.Validator;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RegistrationController {
     @FXML
@@ -32,11 +30,6 @@ public class RegistrationController {
         String Password = TF_Password.getText();
         String ConfirmPassword = TF_ConfirmPassword.getText();
 
-        //TODO
-//        if (userService.phoneExists(PhoneNumber)) {
-//            errors.add("User with this passport number is already registered");
-//        }
-
         if(!Validator.isValidPassport(PassportNumber)){
             L_Error.setText("Passport number is invalid");
             TF_Number.clear();
@@ -55,6 +48,10 @@ public class RegistrationController {
             return;
         }
 
+        if(UserService.getInstance().isUserExistByPassport(PassportNumber)){
+            L_Error.setText("User already exist");
+            return;
+        }
 
         Main.getInstance().showFinishRegistrationScene(PassportNumber, Password);
     }

@@ -1,5 +1,9 @@
 package com.example.lab_1;
 
+
+// TODO bug in role selection, does not simultaneously updates
+
+
 //MyCluster
 //Administrator
 //123456

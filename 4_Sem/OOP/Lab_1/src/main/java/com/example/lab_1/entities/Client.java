@@ -4,30 +4,28 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class Client {
-    final private Bank bank;
+public class Client extends User {
+    final private int bank;
     final private User user;
-    private ArrayList<Account> accounts = new ArrayList<>(); //TODO in client manager
+    private ArrayList<Integer> accounts = new ArrayList<>(); //TODO in client manager
     private SalaryProject salaryProject;
 
-    public Client(User user, Bank bank) {
+    public Client(User user, int bank) {
         this.user = user;
         this.bank = bank;
-
-        bank.addClient(this);// TODO request which can be approved by manager
     }
 
     //Getters and Setters
     //=====================================================
-    public Bank getBank() {
+    public int getBankID() {
         return bank;
     }
 
-    public User getUser() {
+    public User getUserID() {
         return user;
     }
 
-    public ArrayList<Account> getAccounts() {
+    public ArrayList<Integer> getAccounts() {
         return accounts;
     }
 

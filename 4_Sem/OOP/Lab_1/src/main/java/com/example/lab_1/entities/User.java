@@ -1,11 +1,11 @@
 package com.example.lab_1.entities;
 
+import com.example.lab_1.roles.Role;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.lab_1.entities.Enums.Role;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class User {
     private String password;
     private final int id;
 
-    private Map<String, Role> bankRoles = new HashMap<>();
+    private Role role;
 
     public User() {
         this.lastName = "";
@@ -34,7 +34,6 @@ public class User {
         this.passport = "";
         this.password = "";
         this.id = -1;
-        this.bankRoles = new HashMap<>();
     }
 
     @JsonCreator
@@ -46,8 +45,7 @@ public class User {
             @JsonProperty("phone") String phone,
             @JsonProperty("passport") String passport,
             @JsonProperty("password") String password,
-            @JsonProperty("id") int id,
-            @JsonProperty("bankRoles") Map<String, Role> bankRoles
+            @JsonProperty("id") int id
     ) {
         this.lastName = lastName;
         this.firstName = firstName;
@@ -57,19 +55,6 @@ public class User {
         this.passport = passport;
         this.password = password;
         this.id = id;
-        this.bankRoles = bankRoles != null ? bankRoles : new HashMap<>();
-    }
-
-    public void addBank(String bankId) {
-        bankRoles.putIfAbsent(bankId, null);
-    }
-
-    public void registerInBank(String bankId, Role role) {
-        bankRoles.put(bankId, role);
-    }
-
-    public Role getRoleInBank(String bankId) {
-        return bankRoles.get(bankId);
     }
 
     //Builder realization
@@ -144,6 +129,10 @@ public class User {
         return password;
     }
 
+    public static void setIdGenerator(int maxId) {
+        ID_GENERATOR.set(maxId);
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -181,12 +170,6 @@ public class User {
     @JsonProperty
     public int getId() {
         return id;
-    }
-
-
-    // Метод для автоматического логина во всех банках, где роль задана //TODO Auto-login in existing accounts
-    public void loginToBanks() {
-
     }
 
     @JsonIgnore

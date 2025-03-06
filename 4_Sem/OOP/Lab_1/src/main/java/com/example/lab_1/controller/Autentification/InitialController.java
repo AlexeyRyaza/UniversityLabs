@@ -1,4 +1,4 @@
-package com.example.lab_1.controller;
+package com.example.lab_1.controller.Autentification;
 
 import com.example.lab_1.Main;
 import javafx.fxml.FXML;

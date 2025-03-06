@@ -7,16 +7,15 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="473.0" prefWidth="336.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab_1.controller.BankSelectionController">
    <children>
-      <ScrollPane fitToWidth="true" prefHeight="336.0" prefWidth="336.0">
+      <ScrollPane fitToWidth="true" prefHeight="419.0" prefWidth="336.0">
         <content>
-          <AnchorPane minHeight="0.0" minWidth="330.0">
+          <AnchorPane minHeight="0.0" minWidth="330.0" prefWidth="330.0">
                <children>
                   <VBox fx:id="BanksContainer" alignment="TOP_CENTER" layoutX="-1.0" maxHeight="-Infinity" minHeight="-Infinity" minWidth="336.0" spacing="5.0" stylesheets="@styles.css" />
                </children>
             </AnchorPane>
         </content>
       </ScrollPane>
-      <Button layoutX="41.0" layoutY="336.0" mnemonicParsing="false" onAction="#onNewBankBtnClicked" prefHeight="56.0" prefWidth="250.0" styleClass="system-button" stylesheets="@styles.css" text="Add New Bank" AnchorPane.leftAnchor="45.0" AnchorPane.rightAnchor="45.0" />
       <Button layoutX="104.0" layoutY="422.0" mnemonicParsing="false" onAction="#onLoginBtnClicked" prefHeight="37.0" prefWidth="128.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: blue; -fx-font-size: 12px; -fx-font-weight: bold;" text="Back to Log in" />
    </children>
 </AnchorPane>

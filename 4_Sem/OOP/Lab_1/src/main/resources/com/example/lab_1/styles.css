@@ -32,3 +32,94 @@
 .system-button:pressed {
     -fx-background-color: #003F6B; /* Еще темнее при нажатии */
 }
+
+.role-button {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c5c5c5;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 250px;
+    -fx-text-fill: #333;
+    -fx-cursor: hand;
+}
+
+.role-button:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.role-button:pressed {
+    -fx-background-color: #d1d1d1;
+}
+
+.confirm-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8px;
+    -fx-pref-width: 250px;
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+}
+
+.confirm-button:hover {
+    -fx-background-color: #45a049;
+}
+
+.confirm-button:pressed {
+    -fx-background-color: #3e8e41;
+}
+
+.selected-role {
+    -fx-background-color: #4CAF50 !important;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.account-item {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+    -fx-alignment: center-left;
+    -fx-spacing: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0.5, 0, 2);
+}
+
+/* Стиль для кнопки с информацией о счете */
+.account-info-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 20;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER_LEFT;
+    -fx-pref-width: 200px;
+    -fx-min-height: 80px;
+}
+
+/* При наведении фон чуть изменяется */
+.account-info-button:hover {
+    -fx-background-color: #f9f9f9;
+}
+
+/* Стиль для кнопки с действием */
+.account-action-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+/* При наведении на кнопку действия */
+.account-action-button:hover {
+    -fx-background-color: #0056b3;
+}

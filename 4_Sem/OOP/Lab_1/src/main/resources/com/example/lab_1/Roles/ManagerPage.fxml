@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="473.0" prefWidth="672.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab_1.controller.Roles.ManagerPageController">
+   <children>
+      <ComboBox fx:id="CB_Users" layoutX="13.0" layoutY="14.0" prefHeight="25.0" prefWidth="310.0" promptText="Select User" />
+      <VBox fx:id="VB_UsersStatistics" layoutY="49.0" prefHeight="200.0" prefWidth="336.0" />
+      <VBox fx:id="VB_SalaryProjectsApprove" layoutY="283.0" prefHeight="188.0" prefWidth="336.0" />
+      <Label layoutX="103.0" layoutY="258.0" prefHeight="25.0" prefWidth="130.0" text="Waiting salary projects:" />
+      <Line endX="-17.0" endY="319.29290771484375" layoutX="353.0" layoutY="158.0" startX="-17.0" startY="-162.0" />
+      <VBox fx:id="VB_Loans" layoutX="337.0" layoutY="39.0" prefHeight="119.0" prefWidth="336.0" />
+      <Label layoutX="477.0" layoutY="18.0" prefHeight="17.0" prefWidth="57.0" text="Loans list:" />
+      <VBox fx:id="VB_ClientsApprove" layoutX="338.0" layoutY="178.0" prefHeight="95.0" prefWidth="336.0" />
+      <Label layoutX="453.0" layoutY="158.0" prefHeight="17.0" prefWidth="104.0" text="Waiting clients list:" />
+      <VBox fx:id="VB_Enterprizes" layoutX="337.0" layoutY="329.0" prefHeight="142.0" prefWidth="336.0" />
+      <Label layoutX="438.0" layoutY="283.0" prefHeight="17.0" prefWidth="137.0" text="Entreprize operations:" />
+      <ComboBox fx:id="CB_Enterprizes" layoutX="351.0" layoutY="304.0" prefHeight="25.0" prefWidth="310.0" promptText="Select Enterprize" />
+   </children>
+</AnchorPane>

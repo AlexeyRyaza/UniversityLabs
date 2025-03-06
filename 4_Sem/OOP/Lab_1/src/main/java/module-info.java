@@ -13,4 +13,10 @@ module com.example.lab_1 {
     exports com.example.lab_1;
     exports com.example.lab_1.controller;
     opens com.example.lab_1.controller to javafx.fxml;
+    exports com.example.lab_1.controller.Autentification;
+    opens com.example.lab_1.controller.Autentification to javafx.fxml;
+    exports com.example.lab_1.controller.Roles;
+    opens com.example.lab_1.controller.Roles to javafx.fxml;
+    exports com.example.lab_1.controller.Account;
+    opens com.example.lab_1.controller.Account to javafx.fxml;
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="473.0" prefWidth="336.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab_1.controller.Roles.AdministratorPageController">
+   <children>
+      <Label layoutX="126.0" layoutY="57.0" prefHeight="17.0" prefWidth="123.0" text="admin" />
+   </children>
+</AnchorPane>

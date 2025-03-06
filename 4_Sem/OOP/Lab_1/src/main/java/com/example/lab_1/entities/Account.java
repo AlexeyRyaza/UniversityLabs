@@ -1,57 +1,96 @@
 package com.example.lab_1.entities;
 
-import com.example.lab_1.entities.Enums.Currency;
-import com.example.lab_1.entities.Enums.Status;
-import java.util.Stack;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Account {
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
 
-    final private int id;
-    final private long balance;
-    final private Client owner;
-    final private Currency currency;
+    private final int accountId;
 
-    private Stack<Long> history = new Stack<Long>(); // TODO Long -> Operation
-    private Status status;
+    private final int userId;
+    private final int bankId;
 
-    //history impl
-    //=============================================
-    public boolean addHistoryLog(Long change){
-        return history.add(change);
+    private double balance;
+    private String currency;
+    private boolean frozen;
+    private boolean blocked;
+
+    public Account() {
+        this.accountId = -1;
+        this.userId = -1;
+        this.bankId = -1;
     }
 
-    //Builder
-    //==============================================
-    private Account(Builder builder) {
-        id = ID_GENERATOR.getAndIncrement();
+    @JsonCreator
+    public Account(
+            @JsonProperty("accountId") int accountId,
+            @JsonProperty("userId") int userId,
+            @JsonProperty("bankId") int bankId,
+            @JsonProperty("balance") double balance,
+            @JsonProperty("currency") String currency,
+            @JsonProperty("frozen") boolean frozen,
+            @JsonProperty("blocked") boolean blocked
+    ) {
+        this.accountId = accountId;
+        this.userId = userId;
+        this.bankId = bankId;
+        this.balance = balance;
+        this.currency = currency;
+        this.frozen = frozen;
+        this.blocked = blocked;
+    }
+
+    protected Account(Builder builder) {
+        this.accountId = ID_GENERATOR.incrementAndGet();
+        this.userId = builder.userId;
+        this.bankId = builder.bankId;
         this.balance = builder.balance;
-        this.owner = builder.owner;
         this.currency = builder.currency;
-        this.status = builder.status;
+        this.frozen = builder.frozen;
+        this.blocked = builder.blocked;
     }
 
     public static class Builder {
-        private long balance;
-        private Client owner;
-        private Currency currency;
-        private Status status;
+        private int userId;
+        private int bankId;
+        private double balance;
+        private String currency = "BYN";
+        private boolean frozen;
+        private boolean blocked;
 
-        public Builder owner(Client owner) {
-            this.owner = owner;
+        public Builder userId(int userId) {
+            this.userId = userId;
             return this;
         }
-        public Builder currency(Currency currency) {
+
+        public Builder bankId(int bankId) {
+            this.bankId = bankId;
+            return this;
+        }
+
+        public Builder balance(double balance) {
+            this.balance = balance;
+            return this;
+        }
+
+        public Builder currency(String currency) {
             this.currency = currency;
             return this;
         }
-        public Builder status(Status status) {
-            this.status = status;
+
+        public Builder frozen(boolean frozen) {
+            this.frozen = frozen;
             return this;
         }
-        public Builder balance(long balance) {
-            this.balance = balance;
+
+        public Builder blocked(boolean blocked) {
+            this.blocked = blocked;
             return this;
         }
 
@@ -60,75 +99,67 @@ public class Account {
         }
     }
 
-    //Factory
-    //===============================================
-    public interface AccountFactory{
-        Account createAccount(Client owner, Currency currency, Status status);
+    // Getters & Setters
+    //========================================================
+    @JsonProperty
+    public int getAccountId() {
+        return accountId;
     }
 
-    public static class RegularAccountFactory implements AccountFactory {
-        @Override
-        public Account createAccount(Client owner, Currency currency, Status status) {
-            return new Account.Builder()
-                    .owner(owner)
-                    .currency(currency)
-                    .status(status)
-                    .balance(1000)  // Example default value for regular account
-                    .build();
-        }
+    @JsonProperty
+    public int getUserId() {
+        return userId;
     }
 
-    public static class SalaryAccountFactory implements AccountFactory {
-        @Override
-        public Account createAccount(Client owner, Currency currency, Status status) {
-            return new Account.Builder()
-                    .owner(owner)
-                    .currency(currency)
-                    .status(status)
-                    .balance(0)
-                    .build();
-        }
+    @JsonProperty
+    public int getBankId() {
+        return bankId;
     }
 
-    public static class CreditAccountFactory implements AccountFactory {
-        @Override
-        public Account createAccount(Client owner, Currency currency, Status status) {
-            return new Account.Builder()
-                    .owner(owner)
-                    .currency(currency)
-                    .status(status)
-                    .balance(-500)  // Example default value for credit account
-                    .build();
-        }
-    }
-
-
-    //Getters and Setters
-    public Stack<Long> getHistory() {
-        return history;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public long getBalance() {
+    @JsonProperty
+    public double getBalance() {
         return balance;
     }
 
-    public Client getOwner() {
-        return owner;
-    }
-
-    public Currency getCurrency() {
+    @JsonProperty
+    public String getCurrency() {
         return currency;
     }
 
-    public Status getStatus() {
-        return status;
+    @JsonProperty
+    public boolean isFrozen() {
+        return frozen;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    @JsonProperty
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public static void setIdGenerator(int maxId) {
+        ID_GENERATOR.set(maxId);
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    // JSON сериализация
+    @JsonIgnore
+    public String toJson() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации Account в JSON", e);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.example.lab_1.controller;
 
+import com.example.lab_1.controller.Autentification.FinishRegistrationController;
+import com.example.lab_1.controller.Roles.ClientPageController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,7 +16,7 @@ public class SceneManager {
 
     public void showInitialScene() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/InitialPage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/Authentication/InitialPage.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
@@ -25,7 +27,7 @@ public class SceneManager {
     }
     public void showLoginScene() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/LoginPage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/Authentication/LoginPage.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
@@ -37,7 +39,7 @@ public class SceneManager {
 
     public void showRegistrationScene() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/RegistrationPage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/Authentication/RegistrationPage.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
@@ -48,7 +50,7 @@ public class SceneManager {
 
     public void showFinishRegistrationScene(String passport, String password) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/FinishRegistrationPage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/Authentication/FinishRegistrationPage.fxml"));
             Parent root = loader.load();
 
             FinishRegistrationController controller = loader.getController();
@@ -61,13 +63,28 @@ public class SceneManager {
         }
     }
 
-    public void showBankSelectionScene() {
+    public void showBankSelectionScene(int userId) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/BankSelectionPage.fxml"));
             Parent root = loader.load();
 
             BankSelectionController controller = loader.getController();
-            controller.showBanks();
+            controller.initData(userId);
+
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showClientScene(int userId, int bankId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/Roles/ClientPage.fxml"));
+            Parent root = loader.load();
+
+            ClientPageController controller = loader.getController();
+            controller.initData(userId, bankId);
 
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);

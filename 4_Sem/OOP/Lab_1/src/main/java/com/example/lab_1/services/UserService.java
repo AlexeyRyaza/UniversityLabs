@@ -2,10 +2,11 @@ package com.example.lab_1.services;
 
 import com.example.lab_1.entities.User;
 import com.example.lab_1.repositories.CouchbaseUserRepository;
-import com.example.lab_1.repositories.UserRepository;
+import com.example.lab_1.repositories.Interfaces.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserService {
     private static UserService instance;
@@ -13,6 +14,8 @@ public class UserService {
 
     private UserService() {
         this.userRepository = new CouchbaseUserRepository();
+
+        User.setIdGenerator(userRepository.getMaxUserId());
     }
 
     public static synchronized UserService getInstance() {
@@ -24,6 +27,22 @@ public class UserService {
 
     //Methods
     //=======================================
+    public boolean isUserExistByPhone(String phone) {
+        return userRepository.isUserExistByPhone(phone);
+    }
+
+    public boolean isUserExistByPassport(String passport) {
+        return userRepository.isUserExistByPassport(passport);
+    }
+
+    public Optional<User> getUserByPhoneNumber(String Phone) {
+        return userRepository.getUserByPhoneNumber(Phone);
+    }
+
+    public String getUserPassword(String phone) {
+        return userRepository.getUserPassword(phone);
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -34,30 +53,9 @@ public class UserService {
 
     public void saveUser(User user) {
         userRepository.save(user);
-        System.out.println("Пользователь сохранён в БД: " + user);
     }
 
-    public User RegisterUser(String lastname, String firstname, String fathername,
-                             String phone, String passport, String password, String email) {
-        Optional<User> existingUser = userRepository.findById(passport);
-
-        if (existingUser.isPresent()) {
-            System.out.println("Такой пользователь уже существует!");
-            return null;
-        }
-
-        User newUser = new User.Builder()
-                .lastName(lastname)
-                .firstName(firstname)
-                .fatherName(fathername)
-                .email(email)
-                .passport(passport)
-                .phone(phone)
-                .password(password)  // В реальном приложении здесь нужно хешировать пароль!
-                .build();
-
-
-        saveUser(newUser);
-        return newUser;
+    public List<Integer> getUserBanks(String id) {
+        return userRepository.getUserBanks(id);
     }
 }

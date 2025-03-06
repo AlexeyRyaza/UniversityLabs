@@ -1,14 +1,12 @@
-package com.example.lab_1.controller;
+package com.example.lab_1.controller.Autentification;
 
 import com.example.lab_1.Main;
 import com.example.lab_1.entities.User;
 import com.example.lab_1.services.UserService;
-import com.example.lab_1.services.Validator;
+import com.example.lab_1.infrastructure.Validator;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
-import java.util.ArrayList;
 
 public class FinishRegistrationController {
     @FXML
@@ -67,7 +65,7 @@ public class FinishRegistrationController {
             return;
         }
 
-        UserService.getInstance().saveUser(new User.Builder()
+        User user = new User.Builder()
                 .lastName(TF_LastName.getText())
                 .firstName(TF_FirstName.getText())
                 .fatherName(TF_FatherName.getText())
@@ -75,9 +73,11 @@ public class FinishRegistrationController {
                 .passport(passportNumber)
                 .phone(TF_PhoneNumber.getText())
                 .password(password)
-                .build());
+                .build();
 
-        Main.getInstance().showBankSelectionScene();
+        UserService.getInstance().saveUser(user);
+
+        Main.getInstance().showBankSelectionScene(user.getId());
     }
 
     @FXML

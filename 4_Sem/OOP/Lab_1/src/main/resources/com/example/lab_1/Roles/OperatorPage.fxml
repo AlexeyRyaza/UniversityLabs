@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="473.0" prefWidth="336.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab_1.controller.Roles.OperatorPageController">
+   <children>
+      <ComboBox fx:id="CB_Users" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="310.0" />
+      <VBox fx:id="VB_Users" layoutY="39.0" prefHeight="200.0" prefWidth="336.0" />
+      <VBox fx:id="VB_Projects" layoutY="273.0" prefHeight="200.0" prefWidth="336.0" />
+      <Label layoutX="104.0" layoutY="248.0" prefHeight="25.0" prefWidth="130.0" text="Waiting salary projects:" />
+   </children>
+</AnchorPane>
