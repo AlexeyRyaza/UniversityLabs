@@ -14,8 +14,10 @@ public class AccountActionController {
     @FXML private Button deleteButton;
     @FXML private Button cancelButton;
     @FXML private Button freezeButton;
+    @FXML private Button withdrawButton;
     @FXML private TextField TF_Destination;
     @FXML private TextField TF_Amount;
+    @FXML private TextField TF_Amount_Withdraw;
 
 
     private Consumer<String> actionCallback;
@@ -50,7 +52,22 @@ public class AccountActionController {
                 return;
             }
 
+
+
             String result = "transfer:" + destination.get().getAccountId() + ":" + amount;
+
+            if (actionCallback != null) {
+                actionCallback.accept(result);
+            }
+            closeWindow();
+        });
+        withdrawButton.setOnAction(e -> {
+            if(TF_Amount_Withdraw.getText() == null || !TF_Amount_Withdraw.getText().matches("\\d+")) {
+                return;
+            }
+
+            int amount = Integer.parseInt(TF_Amount_Withdraw.getText());
+            String result = "withdraw:" + amount;
 
             if (actionCallback != null) {
                 actionCallback.accept(result);

@@ -16,6 +16,13 @@
       </children>
    </HBox>
     <Button fx:id="transferButton" styleClass="account-action-button" stylesheets="@../styles.css" text="Transfer" />
+   <TextField fx:id="TF_Amount_Withdraw" prefHeight="6.0" prefWidth="200.0" promptText="Amount" />
+   <Button fx:id="withdrawButton" layoutX="101.0" layoutY="200.0" stylesheets="@../styles.css" text="withdraw">
+      <styleClass>
+         <String fx:value="cancel-button" />
+         <String fx:value="account-action-button" />
+      </styleClass>
+   </Button>
     <Button fx:id="cancelButton" stylesheets="@../styles.css" text="Back">
       <styleClass>
          <String fx:value="cancel-button" />

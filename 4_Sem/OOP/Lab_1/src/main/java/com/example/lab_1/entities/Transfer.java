@@ -74,6 +74,11 @@ public class Transfer {
         return id;
     }
 
+    public static void setIdGenerator(int maxId) {
+        ID_GENERATOR.set(maxId);
+    }
+
+
     @JsonProperty
     public int getSourceAccount() {
         return sourceAccount;

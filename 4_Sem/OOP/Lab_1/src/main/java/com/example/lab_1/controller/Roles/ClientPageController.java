@@ -2,15 +2,16 @@ package com.example.lab_1.controller.Roles;
 
 import com.example.lab_1.Main;
 import com.example.lab_1.controller.PopUps.AccountCreatePopup;
+import com.example.lab_1.controller.PopUps.CreditCreatePopup;
 import com.example.lab_1.entities.Account;
-import com.example.lab_1.entities.Transfer;
+import com.example.lab_1.entities.Credit;
 import com.example.lab_1.entities.User;
 import com.example.lab_1.services.AccountService;
+import com.example.lab_1.services.CreditService;
 import com.example.lab_1.services.TransferService;
 import com.example.lab_1.services.UserService;
 import com.example.lab_1.controller.PopUps.AccountActionPopup;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -34,10 +35,19 @@ public class ClientPageController {
     protected void OnCreateAccountBTNClicked(){
         Stage currentStage = (Stage) VB_Field.getScene().getWindow();
 
-        AccountCreatePopup.showAccountCreatePopup(currentStage, userId, bankId, newAccount -> {
-            HBox accountItem = createAccountItem(newAccount);
-            VB_Field.getChildren().add(accountItem);
-        });
+        if(isAccountsLoaded){
+            AccountCreatePopup.showAccountCreatePopup(currentStage, userId, bankId, newAccount -> {
+                HBox accountItem = createAccountItem(newAccount);
+                VB_Field.getChildren().add(accountItem);
+            });
+        }else {
+            CreditCreatePopup.showCreditCreatePopup(currentStage, userId, bankId, newCredit -> {
+                HBox creditItem = createCreditItem(newCredit);
+                VB_Field.getChildren().add(creditItem);
+            });
+        }
+
+
     }
 
     @FXML
@@ -47,12 +57,18 @@ public class ClientPageController {
 
     @FXML
     protected void OnAccountsBTNClicked(){
+        if(isAccountsLoaded) return;
 
+        loadAccounts();
+        isAccountsLoaded = true;
     }
 
     @FXML
     protected void OnCreditsBTNClicked(){
+        if(!isAccountsLoaded) return;
 
+        loadCredits();
+        isAccountsLoaded = false;
     }
 
     @FXML
@@ -65,6 +81,7 @@ public class ClientPageController {
     int userId;
     int bankId;
     User user;
+    boolean isAccountsLoaded;
 
     private HBox createAccountItem(Account account) {
         HBox accountItem = new HBox(15);
@@ -75,7 +92,6 @@ public class ClientPageController {
                         "\nBalance: " + account.getBalance() + " " + account.getCurrency());
         accountInfoBtn.getStyleClass().add("account-info-button");
         accountInfoBtn.setOnAction(e -> {
-            //TODO Watch all info
         });
 
         Button actionBtn = new Button("Actions");
@@ -89,30 +105,42 @@ public class ClientPageController {
                         int destinationId = Integer.parseInt(parts[1]);
                         int amount = Integer.parseInt(parts[2]);
 
-                        if(!account.getCurrency().equals
-                                (AccountService.getInstance().getAccountById(String.valueOf(destinationId))
-                                .get().getCurrency())){
-
-                            return;
-                        }
-
-                        if(account.getBalance() < amount){
-                            return;
-                        }
-
-
+                        Account destination = AccountService.getInstance()
+                                .getAccountById(String.valueOf(destinationId)).orElse(null);
+                        if (destination == null) return;
+                        if(!account.getCurrency().equals(destination.getCurrency())) return;
+                        if(account.getUserId() == destinationId) return;
+                        if(account.getBalance() < amount) return;
 
                         TransferService.getInstance().createTransfer
                                 (account.getAccountId(), destinationId, amount);
-
 
                         account.setBalance(account.getBalance() - amount);
                         accountInfoBtn.setText("Id: " + account.getAccountId() +
                                 "\nBalance: " + account.getBalance() + " " + account.getCurrency());
                     }
-                } else if (selectedAction.equals("delete")) {
+                }
+                else if(selectedAction.startsWith("withdraw:")){
+                    String[] parts = selectedAction.split(":");
+                    if(parts.length == 2){
+                        int amount = Integer.parseInt(parts[1]);
+
+                        if(account.getBalance() < amount){
+                            return;
+                        }
+
+                        TransferService.getInstance().createTransfer(account.getAccountId(), amount);
+
+                        account.setBalance(account.getBalance() - amount);
+                        accountInfoBtn.setText("Id: " + account.getAccountId() +
+                                "\nBalance: " + account.getBalance() + " " + account.getCurrency());
+                    }
+
+                }
+                else if (selectedAction.equals("delete")) {
                     System.out.println(selectedAction);
-                } else if (selectedAction.equals("freeze")) {
+                }
+                else if (selectedAction.equals("freeze")) {
                     System.out.println(selectedAction);
                 }
 
@@ -134,7 +162,9 @@ public class ClientPageController {
         if(user != null){
             L_Name.setText(user.getLastName() + " " + user.getFirstName());
         }
+
         loadAccounts();
+        isAccountsLoaded = true;
     }
 
     private void loadAccounts(){
@@ -146,9 +176,43 @@ public class ClientPageController {
         VB_Field.getChildren().clear();
 
         for (Account account : accounts) {
-            var accountItem = createAccountItem(account);
-
-            VB_Field.getChildren().add(accountItem);
+            VB_Field.getChildren().add(createAccountItem(account));
         }
+    }
+
+    private void loadCredits(){
+        List<Credit> allCredits = CreditService.getInstance().getCreditsByUserId(String.valueOf(userId));
+        List<Credit> credits = allCredits.stream()
+                .filter(credit -> credit.getBankId() == bankId)
+                .toList();
+
+        VB_Field.getChildren().clear();
+        for (Credit credit : credits) {
+            HBox creditItem = createCreditItem(credit);
+            VB_Field.getChildren().add(creditItem);
+        }
+    }
+
+    private HBox createCreditItem(Credit credit) {
+        HBox creditItem = new HBox(15);
+        creditItem.getStyleClass().add("credit-item");
+
+        if (!credit.isApproved()) {
+            creditItem.getStyleClass().add("credit-not-approved");
+        }
+
+        Button creditInfoBtn = new Button(
+                        "\nAmount: " + credit.getAmount() +
+                        "\nRate: " + credit.getInterestRate() +
+                        "\nTerm: " + credit.getTerm() + " months" +
+                        "\nMonthly Payment: " + credit.getMonthlyPayment());
+        creditInfoBtn.getStyleClass().add("credit-info-button");
+        creditInfoBtn.setOnAction(e -> {
+            // Обработка нажатия для просмотра информации по кредиту
+            System.out.println("Просмотр кредита: " + credit.getId());
+        });
+
+        creditItem.getChildren().addAll(creditInfoBtn);
+        return creditItem;
     }
 }

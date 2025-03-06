@@ -27,6 +27,15 @@ public class CouchbaseAccountRepository implements AccountRepository {
     }
 
     @Override
+    public void update(int sourceAccountId, int amount){
+        Account sourceAccount = AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).get();
+
+        sourceAccount.setBalance(sourceAccount.getBalance() - amount);
+
+        save(sourceAccount);
+    }
+
+    @Override
     public void update(int sourceAccountId, int destinationAccountId, int amount){
         Account sourceAccount = AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).get();
         Account destinationAccount = AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).get();

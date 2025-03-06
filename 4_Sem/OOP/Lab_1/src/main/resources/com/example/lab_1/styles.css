@@ -123,3 +123,55 @@
 .account-action-button:hover {
     -fx-background-color: #0056b3;
 }
+
+.credit-item {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+    -fx-alignment: center-left;
+    -fx-spacing: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0.5, 0, 2);
+}
+
+/* Если кредит не одобрен, добавляем дополнительный класс,
+   который перекрашивает фон в светло-красный */
+.credit-not-approved {
+    -fx-background-color: #ffcccc; /* светло-красный фон */
+}
+
+/* Стиль для кнопки с информацией о кредите */
+.credit-info-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 20;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER_LEFT;
+    -fx-pref-width: 300px;
+    -fx-min-height: 150px;
+}
+
+/* При наведении фон чуть изменяется */
+.credit-info-button:hover {
+    -fx-background-color: #f9f9f9;
+}
+
+/* Стиль для кнопки действий с кредитом */
+.credit-action-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+/* При наведении на кнопку действия */
+.credit-action-button:hover {
+    -fx-background-color: #0056b3;
+}

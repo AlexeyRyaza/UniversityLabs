@@ -2,7 +2,6 @@ package com.example.lab_1.repositories;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
-import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.json.JsonObject;

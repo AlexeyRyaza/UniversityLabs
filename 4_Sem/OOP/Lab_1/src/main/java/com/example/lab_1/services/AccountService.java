@@ -28,6 +28,10 @@ public class AccountService {
         accountRepository.update(sourceAccount, destinationAccount, amount);
     }
 
+    public void updateAccount(int sourceAccount, int amount) {
+        accountRepository.update(sourceAccount, amount);
+    }
+
     public void saveAccount(Account account) {
         accountRepository.save(account);
     }

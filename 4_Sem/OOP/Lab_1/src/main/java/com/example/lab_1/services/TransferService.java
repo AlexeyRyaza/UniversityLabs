@@ -1,6 +1,5 @@
 package com.example.lab_1.services;
 
-import com.example.lab_1.entities.Account;
 import com.example.lab_1.entities.Transfer;
 import com.example.lab_1.repositories.CouchbaseTransferRepository;
 
@@ -13,6 +12,8 @@ public class TransferService {
 
     private TransferService() {
         this.transferRepository = new CouchbaseTransferRepository();
+
+        Transfer.setIdGenerator(getMaxTransferId());
     }
 
     public static synchronized TransferService getInstance() {
@@ -28,6 +29,16 @@ public class TransferService {
         TransferService.getInstance().saveTransfer(new Transfer.Builder()
                 .amount(amount)
                 .destinationAccount(destinationAccount)
+                .sourceAccount(sourceAccount)
+                .build());
+    }
+
+    public void createTransfer(int sourceAccount, int amount) {
+        AccountService.getInstance().updateAccount(sourceAccount, amount);
+
+        TransferService.getInstance().saveTransfer(new Transfer.Builder()
+                .amount(amount)
+                .destinationAccount(-1)
                 .sourceAccount(sourceAccount)
                 .build());
     }
