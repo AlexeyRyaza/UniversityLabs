@@ -1,11 +1,13 @@
 package com.example.lab_1.services;
 
 import com.example.lab_1.entities.Credit;
+import com.example.lab_1.entities.LogEntry;
 import com.example.lab_1.repositories.CouchbaseCreditRepository;
 import com.example.lab_1.repositories.Interfaces.CreditRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CreditService {
     private static CreditService instance;
@@ -24,6 +26,10 @@ public class CreditService {
         return instance;
     }
 
+    public boolean deleteCredit(String id) {
+        return creditRepository.delete(id);
+    }
+
     public void saveCredit(Credit credit) {
         creditRepository.save(credit);
     }
@@ -40,7 +46,23 @@ public class CreditService {
         return creditRepository.findByUserId(userId);
     }
 
-    public void deleteCredit(String id) {
+    public List<Credit> getPendingCredits(String bankId) {
+        return creditRepository.findByBankId(bankId)
+                .stream()
+                .filter(credit -> !credit.isApproved())
+                .collect(Collectors.toList());
+    }
+
+    public void approveCredit(String id) {
+        creditRepository.approveCredit(id);
+
+        LogService.logAction(new LogEntry(
+                "credit_approval",
+                id,
+                "Кредит " + id + " был одобрен"
+        ));
+    }
+    public void rejectCredit(String id) {
         creditRepository.delete(id);
     }
 

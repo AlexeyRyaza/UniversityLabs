@@ -32,12 +32,17 @@ public class AccountService {
         accountRepository.update(sourceAccount, amount);
     }
 
+    public void updateSalaryAccount(int destinationAccount, int amount) {
+        accountRepository.updateSalary(destinationAccount, amount);
+    }
+
+
     public void saveAccount(Account account) {
         accountRepository.save(account);
     }
 
-    public void deleteAccount(String id) {
-        accountRepository.delete(id);
+    public boolean deleteAccount(String id) {
+        return accountRepository.delete(id);
     }
 
     public Optional<Account> getAccountById(String id) {
@@ -54,5 +59,9 @@ public class AccountService {
 
     public List<Account> getAccountsByBankId(String bankId) {
         return accountRepository.findByBankId(bankId);
+    }
+
+    public int getAccountByBankIdAndUserId(String bankId, String userId) {
+        return accountRepository.getAccountsByBankIdAndUserId(bankId, userId);
     }
 }

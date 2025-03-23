@@ -27,6 +27,18 @@ public class UserService {
 
     //Methods
     //=======================================
+    public List<User> getUsersWithoutEnterprise(String bankId) {
+        return userRepository.getUsersWithoutEnterprise(bankId);
+    }
+
+    public void assignUserToEnterprise(String userId, String enterpriseId, int amount) {
+        userRepository.assignUserToEnterprise(userId, enterpriseId, amount);
+    }
+
+    public int getUsersSalaryProject(String userId) {
+        return userRepository.getUsersSalaryProject(userId);
+    }
+
     public boolean isUserExistByPhone(String phone) {
         return userRepository.isUserExistByPhone(phone);
     }
@@ -57,5 +69,9 @@ public class UserService {
 
     public List<Integer> getUserBanks(String id) {
         return userRepository.getUserBanks(id);
+    }
+
+    public boolean deleteUserFromSalary(String id) {
+        return userRepository.deleteUserFromSalary(id);
     }
 }

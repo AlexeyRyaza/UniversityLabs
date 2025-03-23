@@ -10,6 +10,8 @@ import com.example.lab_1.entities.User;
 import com.example.lab_1.infrastructure.CouchbaseConnection;
 import com.couchbase.client.java.query.QueryResult;
 import com.example.lab_1.repositories.Interfaces.UserRepository;
+import com.example.lab_1.services.SalaryProjectService;
+import com.example.lab_1.services.UserBankService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
@@ -23,15 +25,22 @@ public class CouchbaseUserRepository implements UserRepository {
 
     public CouchbaseUserRepository() {
         this.bucket = CouchbaseConnection.getBucket();
-        //this.collection = bucket.defaultCollection();
         this.collection = bucket.scope("_default").collection("users");
     }
-
 
     @Override
     public void save(User user) {
         try {
             collection.upsert(String.valueOf(user.getId()), user);
+
+            var thisCollection = CouchbaseConnection.getBucket().scope("_default").collection("user_salaryPrj");
+            JsonObject json = JsonObject.create()
+                    .put("userId", user.getId())
+                    .put("salaryProjectId", -1)
+                    .put("amount", 0);
+
+
+            thisCollection.upsert(String.valueOf(user.getId()), json);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -178,6 +187,75 @@ public class CouchbaseUserRepository implements UserRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int getUsersSalaryProject(String userId) {
+        String query = "Select user_salaryPrj.* from `Lab_1`.`_default`.`user_salaryPrj` where userId = " + userId;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getInt("salaryProjectId"))
+                .orElse(-1);
+    }
+
+    @Override
+    public void assignUserToEnterprise(String userId, String enterpriseId, int amount) {
+        var thisCollection = CouchbaseConnection.getBucket().scope("_default").collection("user_salaryPrj");
+        int salaryProjectId = SalaryProjectService.getInstance().getSalaryProjectByEnterpriseId(String.valueOf(enterpriseId)).get().getId();
+
+        JsonObject json = JsonObject.create()
+                .put("salaryProjectId", salaryProjectId)
+                .put("userId", Integer.parseInt(userId))
+                .put("amount", amount);
+
+
+        thisCollection.replace(userId, json);
+    }
+
+    @Override
+    public boolean deleteUserFromSalary(String id) {
+        var thisCollection = CouchbaseConnection.getBucket().scope("_default").collection("user_salaryPrj");
+
+        JsonObject json = JsonObject.create()
+                .put("userId", Integer.parseInt(id))
+                .put("amount", 0)
+                .put("salaryProjectId", -1);
+
+
+        try {
+            thisCollection.replace(id, json);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<User> getUsersWithoutEnterprise(String bankId) {
+        List<User> users = new ArrayList<>();
+
+        String query = "Select user_salaryPrj.* from `Lab_1`.`_default`.`user_salaryPrj` where salaryProjectId = " + -1;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        result.rowsAsObject().forEach(row -> {
+            try{
+                int userId = row.getInt("userId");
+                var role = UserBankService.getInstance().getUserRoleByID(String.valueOf(userId), bankId);
+                if("client".equals(role)){
+                    User user = findById(String.valueOf(userId)).get();
+                    users.add(user);
+                }
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        });
+
+        return users;
     }
 
     @Override

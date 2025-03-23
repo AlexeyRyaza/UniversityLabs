@@ -23,6 +23,14 @@ public class TransferService {
         return instance;
     }
 
+    public List<Transfer> getTransfersByBank(String bankId) {
+        return transferRepository.findByBank(bankId);
+    }
+
+    public List<Transfer> getTransfersByBankAndEnterprise(String bankId) {
+        return transferRepository.findByBankAndEnterprise(bankId);
+    }
+
     public void createTransfer(int sourceAccount, int destinationAccount, int amount) {
         AccountService.getInstance().updateAccount(sourceAccount, destinationAccount, amount);
 
@@ -42,13 +50,18 @@ public class TransferService {
                 .sourceAccount(sourceAccount)
                 .build());
     }
+    public void createSalaryTransfer(int destinationAccount, int amount, int sourceEnterprise) {
+        AccountService.getInstance().updateSalaryAccount(destinationAccount, amount);
+
+        TransferService.getInstance().saveTransfer(new Transfer.Builder()
+                .amount(amount)
+                .destinationAccount(destinationAccount)
+                .sourceAccount(-sourceEnterprise)
+                .build());
+    }
 
     public void saveTransfer(Transfer transfer) {
         transferRepository.save(transfer);
-    }
-
-    public void deleteTransfer(String id) {
-        transferRepository.delete(id);
     }
 
     public Optional<Transfer> getTransferById(String id) {

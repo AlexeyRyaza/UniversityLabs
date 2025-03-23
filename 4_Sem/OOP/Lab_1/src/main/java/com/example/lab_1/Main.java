@@ -1,8 +1,10 @@
 package com.example.lab_1;
 
-
-// TODO bug in role selection, does not simultaneously updates
-
+/*
+    Approve of client
+    Approve of credit +
+    Approve of Salary project +
+ */
 
 //MyCluster
 //Administrator

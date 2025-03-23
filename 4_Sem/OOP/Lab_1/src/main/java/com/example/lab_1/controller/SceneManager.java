@@ -1,7 +1,7 @@
 package com.example.lab_1.controller;
 
 import com.example.lab_1.controller.Autentification.FinishRegistrationController;
-import com.example.lab_1.controller.Roles.ClientPageController;
+import com.example.lab_1.controller.Roles.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -85,6 +85,66 @@ public class SceneManager {
 
             ClientPageController controller = loader.getController();
             controller.initData(userId, bankId);
+
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showSideSpecialistScene(int userId, int bankId, int enterpriseId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/Roles/SpecialistPage.fxml"));
+            Parent root = loader.load();
+
+            SideSpecialistPageController controller = loader.getController();
+            controller.initData(userId, bankId, enterpriseId);
+
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showOperatorScene(int userId, int bankId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/Roles/OperatorPage.fxml"));
+            Parent root = loader.load();
+
+            OperatorPageController controller = loader.getController();
+            controller.initData(userId, bankId);
+
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showManagerScene(int userId, int bankId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/Roles/ManagerPage.fxml"));
+            Parent root = loader.load();
+
+            ManagerPageController controller = loader.getController();
+            controller.initData(userId, bankId);
+
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showAdminScene(int userId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/lab_1/Roles/AdminPage.fxml"));
+            Parent root = loader.load();
+
+            AdminPageController controller = loader.getController();
+            controller.initData(userId);
 
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);

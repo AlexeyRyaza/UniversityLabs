@@ -22,7 +22,6 @@ public class CouchbaseCreditRepository implements CreditRepository {
 
     public CouchbaseCreditRepository() {
         this.bucket = CouchbaseConnection.getBucket();
-        // Предположим, что коллекция для кредитов называется "credits"
         this.collection = bucket.scope("_default").collection("credits");
     }
 
@@ -43,16 +42,27 @@ public class CouchbaseCreditRepository implements CreditRepository {
         collection.upsert(String.valueOf(credit.getId()), credit);
     }
 
+    public void update(Credit credit) {
+        collection.replace(String.valueOf(credit.getId()), credit);
+    }
+
     @Override
     public Optional<Credit> findById(String id) {
-        try {
-            GetResult result = collection.get(id);
-            String json = result.contentAs(String.class);
-            Credit credit = mapper.readValue(json, Credit.class);
-            return Optional.of(credit);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+        String query = "SELECT credits.* FROM `Lab_1`.`_default`.`credits` credits WHERE credits.id = $id";
+        QueryResult result = CouchbaseConnection.getCluster().query(query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("id", Integer.valueOf(id))));
+
+        List<Credit> credits = new ArrayList<>();
+        result.rowsAsObject().forEach(row -> {
+            try{
+                Credit credit = mapper.readValue(row.toString(), Credit.class);
+                credits.add(credit);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        return Optional.ofNullable(credits.getFirst());
     }
 
     @Override
@@ -72,8 +82,13 @@ public class CouchbaseCreditRepository implements CreditRepository {
     }
 
     @Override
-    public void delete(String id) {
-        collection.remove(id);
+    public boolean delete(String id) {
+        try {
+            collection.remove(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -93,5 +108,32 @@ public class CouchbaseCreditRepository implements CreditRepository {
             }
         });
         return credits;
+    }
+
+    @Override
+    public List<Credit> findByBankId(String userId) {
+        List<Credit> credits = new ArrayList<>();
+        String query = "SELECT credits.* FROM `Lab_1`.`_default`.`credits` credits WHERE credits.bankId = $userId";
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("userId", Integer.valueOf(userId)))
+        );
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Credit credit = mapper.readValue(row.toString(), Credit.class);
+                credits.add(credit);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return credits;
+    }
+
+    @Override
+    public void approveCredit(String id) {
+        findById(id).ifPresent(credit -> {
+            credit.setApproved(true);
+            update(credit);
+        });
     }
 }

@@ -10,8 +10,10 @@ public interface TransferRepository {
     void save(Transfer transfer);
     void delete(String id);
     Optional<Transfer> findById(String id);
+    List<Transfer> findByBankAndEnterprise(String bankId);
     List<Transfer> findAll();
     int getMaxTransferId();
     List<Transfer> findByDestinationAccount(String destinationAccount);
     List<Transfer> findBySourceAccount(String sourceAccount);
+    List<Transfer> findByBank(String bankId);
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="15" style="-fx-padding: 20; -fx-alignment: center; -fx-background-color: #f4f4f4;" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab_1.controller.CompanySelectionController">
+
+    <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Выберите компанию" />
+
+          <VBox fx:id="companyListContainer" spacing="10" stylesheets="@../styles.css" />
+
+
+    <Button fx:id="confirmButton" styleClass="confirm-button" stylesheets="@../styles.css" text="Подтвердить" />
+</VBox>

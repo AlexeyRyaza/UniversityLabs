@@ -2,7 +2,6 @@ package com.example.lab_1.repositories;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
-import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.json.JsonObject;
@@ -27,18 +26,40 @@ public class CouchbaseAccountRepository implements AccountRepository {
     }
 
     @Override
+    public void updateSalary(int destinationAccountId, int amount) {
+        Account destinationAccount;
+        if(AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).isPresent())
+            destinationAccount = AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).get();
+        else return;
+
+        destinationAccount.setBalance(destinationAccount.getBalance() + amount);
+
+        save(destinationAccount);
+    }
+
+    @Override
     public void update(int sourceAccountId, int amount){
-        Account sourceAccount = AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).get();
+        Account sourceAccount;
+        if(AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).isPresent())
+            sourceAccount = AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).get();
+        else return;
 
         sourceAccount.setBalance(sourceAccount.getBalance() - amount);
-
         save(sourceAccount);
     }
 
     @Override
     public void update(int sourceAccountId, int destinationAccountId, int amount){
-        Account sourceAccount = AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).get();
-        Account destinationAccount = AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).get();
+        Account sourceAccount;
+        Account destinationAccount;
+
+        if(AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).isPresent())
+            sourceAccount = AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).get();
+        else return;
+
+        if(AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).isPresent())
+            destinationAccount = AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).get();
+        else return;
 
         sourceAccount.setBalance(sourceAccount.getBalance() - amount);
         destinationAccount.setBalance(destinationAccount.getBalance() + amount);
@@ -60,13 +81,33 @@ public class CouchbaseAccountRepository implements AccountRepository {
     }
 
     @Override
+    public int getAccountsByBankIdAndUserId(String bankId, String userId) {
+        String query = "Select accounts.* from `Lab_1`.`_default`.`accounts` where bankId = " + bankId + " and userId = " + userId;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        List<Integer> accounts = new ArrayList<>();
+        result.rowsAsObject().forEach(row -> {
+            accounts.add(row.getInt("accountId"));
+        });
+
+        accounts.sort(Integer::compareTo);
+        return accounts.isEmpty() ? 0 : accounts.getFirst();
+    }
+
+    @Override
     public void save(Account account) {
         collection.upsert(String.valueOf(account.getAccountId()), account);
     }
 
     @Override
-    public void delete(String id) {
-        collection.remove(id);
+    public boolean delete(String id) {
+        try {
+            collection.remove(id);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

@@ -15,15 +15,14 @@
             <Font name="Javanese Text" size="25.0" />
          </font>
       </Label>
-      <Label layoutX="6.0" layoutY="85.0" prefHeight="39.0" prefWidth="188.0" text="Your salary project:">
+      <Label layoutX="6.0" layoutY="85.0" prefHeight="39.0" prefWidth="200.0" text="You are connected to:">
          <font>
             <Font name="Verdana Bold" size="16.0" />
          </font></Label>
-      <Label fx:id="L_SalaryPr" layoutX="194.0" layoutY="85.0" prefHeight="70.0" prefWidth="136.0">
+      <Label fx:id="L_SalaryPr" layoutX="208.0" layoutY="70.0" prefHeight="70.0" prefWidth="114.0">
          <font>
-            <Font name="Verdana" size="16.0" />
+            <Font name="Verdana Bold" size="16.0" />
          </font></Label>
-      <Button layoutX="208.0" layoutY="171.0" mnemonicParsing="false" onAction="#OnSalaryPrBTNClicked" prefHeight="39.0" prefWidth="114.0" styleClass="account-action-button" stylesheets="@../styles.css" text="Make request" AnchorPane.rightAnchor="14.0" />
       <Button layoutX="14.0" layoutY="420.0" mnemonicParsing="false" onAction="#OnAccountsBTNClicked" prefHeight="39.0" prefWidth="106.0" styleClass="account-action-button" text="Accounts">
          <stylesheets>
             <URL value="@../styles.css" />

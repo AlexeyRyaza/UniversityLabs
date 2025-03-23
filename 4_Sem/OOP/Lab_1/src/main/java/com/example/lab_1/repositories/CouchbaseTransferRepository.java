@@ -5,12 +5,16 @@ import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.json.JsonObject;
+import com.example.lab_1.entities.Account;
+import com.example.lab_1.services.AccountService;
+import com.example.lab_1.services.EnterpriseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.lab_1.entities.Transfer;
 import com.example.lab_1.infrastructure.CouchbaseConnection;
 import com.example.lab_1.repositories.Interfaces.TransferRepository;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,6 +113,67 @@ public class CouchbaseTransferRepository implements TransferRepository {
             }
         });
         return transfers;
+    }
+
+    @Override
+    public List<Transfer> findByBankAndEnterprise(String bankId) {
+        var enterprises = EnterpriseService.getInstance().getEnterprisesByBankId(bankId);
+        List<Transfer> transfers = new ArrayList<>();
+
+        enterprises.forEach(enterpriseId1 -> {
+            String query = "Select transfers.* FROM `Lab_1`.`_default`.`transfers`" +
+                    " where destinationAccount = " + -enterpriseId1.getId() +
+                    " or sourceAccount = " + -enterpriseId1.getId();
+            QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+            result.rowsAsObject().forEach(row -> {
+                try {
+                    Transfer transfer = mapper.readValue(row.toString(), Transfer.class);
+                    transfers.add(transfer);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+
+        return transfers;
+    }
+
+    @Override
+    public List<Transfer> findByBank(String bankId) {
+        var allTransfers = findAll();
+
+        List<Transfer> validTransfers = new ArrayList<>();
+        for (Transfer transfer : allTransfers) {
+            String destinId = String.valueOf(transfer.getDestinationAccount());
+            String sourceId = String.valueOf(transfer.getSourceAccount());
+
+            if(Integer.parseInt(destinId) <= 0 || Integer.parseInt(sourceId) <= 0) {
+                continue;
+            }
+
+            Account destinAccount;
+            Account sourceAccount;
+
+            if(AccountService.getInstance().getAccountById(destinId).isPresent())
+                destinAccount = AccountService.getInstance().getAccountById(destinId).get();
+            else continue;
+
+            if(AccountService.getInstance().getAccountById(sourceId).isPresent())
+                sourceAccount = AccountService.getInstance().getAccountById(sourceId).get();
+            else continue;
+
+            boolean destAccountMatches = bankId.equals(String.valueOf(destinAccount.getBankId()));
+            boolean sourceAccountMatches = bankId.equals(String.valueOf(sourceAccount.getBankId()));
+
+            if(destAccountMatches || sourceAccountMatches) {
+                validTransfers.add(transfer);
+            }
+        }
+
+        validTransfers.sort(Comparator.comparing(Transfer::getId));
+        return validTransfers;
     }
 
     @Override

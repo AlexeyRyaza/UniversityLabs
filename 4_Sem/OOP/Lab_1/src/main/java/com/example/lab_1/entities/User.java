@@ -1,6 +1,5 @@
 package com.example.lab_1.entities;
 
-import com.example.lab_1.roles.Role;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,8 +21,6 @@ public class User {
     private final String passport;
     private String password;
     private final int id;
-
-    private Role role;
 
     public User() {
         this.lastName = "";

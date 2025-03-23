@@ -3,13 +3,8 @@ package com.example.lab_1.controller.Roles;
 import com.example.lab_1.Main;
 import com.example.lab_1.controller.PopUps.AccountCreatePopup;
 import com.example.lab_1.controller.PopUps.CreditCreatePopup;
-import com.example.lab_1.entities.Account;
-import com.example.lab_1.entities.Credit;
-import com.example.lab_1.entities.User;
-import com.example.lab_1.services.AccountService;
-import com.example.lab_1.services.CreditService;
-import com.example.lab_1.services.TransferService;
-import com.example.lab_1.services.UserService;
+import com.example.lab_1.entities.*;
+import com.example.lab_1.services.*;
 import com.example.lab_1.controller.PopUps.AccountActionPopup;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -43,7 +38,7 @@ public class ClientPageController {
         }else {
             CreditCreatePopup.showCreditCreatePopup(currentStage, userId, bankId, newCredit -> {
                 HBox creditItem = createCreditItem(newCredit);
-                VB_Field.getChildren().add(creditItem);
+                loadCredits();
             });
         }
 
@@ -165,6 +160,24 @@ public class ClientPageController {
 
         loadAccounts();
         isAccountsLoaded = true;
+
+        loadSalaryProject();
+    }
+
+    private void loadSalaryProject() {
+        int salaryProjectId = UserService.getInstance().getUsersSalaryProject(String.valueOf(userId));
+        if(salaryProjectId == -1){
+            L_SalaryPr.setText("None");
+        }
+        else {
+            SalaryProject salaryProject = SalaryProjectService.getInstance()
+                    .getSalaryProjectById(String.valueOf(salaryProjectId)).get();
+
+            Enterprise enterprise = EnterpriseService.getInstance()
+                    .getEnterpriseById(String.valueOf(salaryProject.getEnterpriseId())).get();
+
+            L_SalaryPr.setText(enterprise.getName());
+        }
     }
 
     private void loadAccounts(){
