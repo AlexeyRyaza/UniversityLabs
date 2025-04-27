@@ -57,11 +57,31 @@ public class AccountService {
         return accountRepository.findByUserId(userId);
     }
 
-    public List<Account> getAccountsByBankId(String bankId) {
-        return accountRepository.findByBankId(bankId);
+    public List<Account> getAccountsByBankId(String userId, String bankId) {
+        return accountRepository.findByBankId(userId, bankId);
     }
 
     public int getAccountByBankIdAndUserId(String bankId, String userId) {
         return accountRepository.getAccountsByBankIdAndUserId(bankId, userId);
+    }
+
+    public void blockAccount(String id, boolean state) {
+        Account account;
+        if(getAccountById(id).isPresent())
+            account = getAccountById(id).get();
+        else return;
+
+        account.setBlocked(state);
+        accountRepository.replace(account);
+    }
+
+    public void freezeAccount(String id) {
+        Account account;
+        if(getAccountById(id).isPresent())
+            account = getAccountById(id).get();
+        else return;
+
+        account.setFrozen(!account.isFrozen());
+        accountRepository.replace(account);
     }
 }

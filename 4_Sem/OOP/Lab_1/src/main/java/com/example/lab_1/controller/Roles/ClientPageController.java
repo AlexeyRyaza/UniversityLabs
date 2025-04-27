@@ -14,7 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ClientPageController {
     @FXML
@@ -37,17 +36,9 @@ public class ClientPageController {
             });
         }else {
             CreditCreatePopup.showCreditCreatePopup(currentStage, userId, bankId, newCredit -> {
-                HBox creditItem = createCreditItem(newCredit);
                 loadCredits();
             });
         }
-
-
-    }
-
-    @FXML
-    protected void OnSalaryPrBTNClicked(){
-
     }
 
     @FXML
@@ -102,10 +93,12 @@ public class ClientPageController {
 
                         Account destination = AccountService.getInstance()
                                 .getAccountById(String.valueOf(destinationId)).orElse(null);
+
                         if (destination == null) return;
                         if(!account.getCurrency().equals(destination.getCurrency())) return;
                         if(account.getUserId() == destinationId) return;
                         if(account.getBalance() < amount) return;
+                        if(account.isBlocked() || account.isFrozen()) return;
 
                         TransferService.getInstance().createTransfer
                                 (account.getAccountId(), destinationId, amount);
@@ -120,9 +113,8 @@ public class ClientPageController {
                     if(parts.length == 2){
                         int amount = Integer.parseInt(parts[1]);
 
-                        if(account.getBalance() < amount){
-                            return;
-                        }
+                        if(account.getBalance() < amount) return;
+                        if(account.isBlocked() || account.isFrozen()) return;
 
                         TransferService.getInstance().createTransfer(account.getAccountId(), amount);
 
@@ -130,15 +122,13 @@ public class ClientPageController {
                         accountInfoBtn.setText("Id: " + account.getAccountId() +
                                 "\nBalance: " + account.getBalance() + " " + account.getCurrency());
                     }
-
                 }
                 else if (selectedAction.equals("delete")) {
-                    System.out.println(selectedAction);
+                    AccountService.getInstance().deleteAccount(String.valueOf(account.getAccountId()));
                 }
                 else if (selectedAction.equals("freeze")) {
-                    System.out.println(selectedAction);
+                    AccountService.getInstance().freezeAccount(String.valueOf(account.getAccountId()));
                 }
-
             });
         });
 
@@ -170,11 +160,15 @@ public class ClientPageController {
             L_SalaryPr.setText("None");
         }
         else {
-            SalaryProject salaryProject = SalaryProjectService.getInstance()
-                    .getSalaryProjectById(String.valueOf(salaryProjectId)).get();
+            SalaryProject salaryProject;
+            if(SalaryProjectService.getInstance().getSalaryProjectById(String.valueOf(salaryProjectId)).isPresent())
+                salaryProject = SalaryProjectService.getInstance().getSalaryProjectById(String.valueOf(salaryProjectId)).get();
+            else return;
 
-            Enterprise enterprise = EnterpriseService.getInstance()
-                    .getEnterpriseById(String.valueOf(salaryProject.getEnterpriseId())).get();
+            Enterprise enterprise;
+            if(EnterpriseService.getInstance().getEnterpriseById(String.valueOf(salaryProject.getEnterpriseId())).isPresent())
+                enterprise = EnterpriseService.getInstance().getEnterpriseById(String.valueOf(salaryProject.getEnterpriseId())).get();
+            else return;
 
             L_SalaryPr.setText(enterprise.getName());
         }

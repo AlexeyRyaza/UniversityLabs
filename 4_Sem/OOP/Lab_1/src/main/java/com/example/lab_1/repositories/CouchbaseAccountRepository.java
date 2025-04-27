@@ -100,6 +100,11 @@ public class CouchbaseAccountRepository implements AccountRepository {
     }
 
     @Override
+    public void replace(Account account) {
+        collection.replace(String.valueOf(account.getAccountId()), account);
+    }
+
+    @Override
     public boolean delete(String id) {
         try {
             collection.remove(id);
@@ -176,18 +181,11 @@ public class CouchbaseAccountRepository implements AccountRepository {
     }
 
     @Override
-    public List<Account> findByBankId(String bankId) {
+    public List<Account> findByBankId(String userId, String bankId) {
         List<Account> accounts = new ArrayList<>();
-        String query = "SELECT accounts.* " +
-                "FROM `Lab_1`.`_default`.`accounts` accounts " +
-                "WHERE accounts.bankId = $bankId";
+        String query = "SELECT accounts.* FROM `Lab_1`.`_default`.`accounts` accounts WHERE accounts.userId = " + userId + " and accounts.bankId = " + bankId;
 
-        QueryResult result = CouchbaseConnection.getCluster().query(
-                query,
-                QueryOptions.queryOptions().parameters(
-                        JsonObject.create().put("bankId", Integer.valueOf(bankId))
-                )
-        );
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
 
         result.rowsAsObject().forEach(row -> {
             try {

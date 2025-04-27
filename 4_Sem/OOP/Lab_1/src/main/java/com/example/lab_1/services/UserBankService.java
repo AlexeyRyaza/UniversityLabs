@@ -71,7 +71,7 @@ public class UserBankService {
     public boolean deleteUser(String userId, String bankId) {
         AtomicBoolean deletedSuccessfully = new AtomicBoolean(true);
 
-        List<Account> userAccounts = AccountService.getInstance().getAccountsByUserId(userId);
+        List<Account> userAccounts = AccountService.getInstance().getAccountsByBankId(userId, bankId);
         userAccounts.forEach(account -> {
             if(!AccountService.getInstance().deleteAccount(String.valueOf(account.getAccountId()))){
                 deletedSuccessfully.set(false);

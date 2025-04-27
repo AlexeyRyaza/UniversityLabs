@@ -1,0 +1,3564 @@
+### Entity Layer
+
+//Account
+package com.example.lab_1.entities;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Account {
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
+
+    private final int accountId;
+
+    private final int userId;
+    private final int bankId;
+
+    private double balance;
+    private String currency;
+    private boolean frozen;
+    private boolean blocked;
+
+    public Account() {
+        this.accountId = -1;
+        this.userId = -1;
+        this.bankId = -1;
+    }
+
+    @JsonCreator
+    public Account(
+            @JsonProperty("accountId") int accountId,
+            @JsonProperty("userId") int userId,
+            @JsonProperty("bankId") int bankId,
+            @JsonProperty("balance") double balance,
+            @JsonProperty("currency") String currency,
+            @JsonProperty("frozen") boolean frozen,
+            @JsonProperty("blocked") boolean blocked
+    ) {
+        this.accountId = accountId;
+        this.userId = userId;
+        this.bankId = bankId;
+        this.balance = balance;
+        this.currency = currency;
+        this.frozen = frozen;
+        this.blocked = blocked;
+    }
+
+    protected Account(Builder builder) {
+        this.accountId = ID_GENERATOR.incrementAndGet();
+        this.userId = builder.userId;
+        this.bankId = builder.bankId;
+        this.balance = builder.balance;
+        this.currency = builder.currency;
+        this.frozen = builder.frozen;
+        this.blocked = builder.blocked;
+    }
+
+    public static class Builder {
+        private int userId;
+        private int bankId;
+        private double balance;
+        private String currency = "BYN";
+        private boolean frozen;
+        private boolean blocked;
+
+        public Builder userId(int userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder bankId(int bankId) {
+            this.bankId = bankId;
+            return this;
+        }
+
+        public Builder balance(double balance) {
+            this.balance = balance;
+            return this;
+        }
+
+        public Builder currency(String currency) {
+            this.currency = currency;
+            return this;
+        }
+
+        public Builder frozen(boolean frozen) {
+            this.frozen = frozen;
+            return this;
+        }
+
+        public Builder blocked(boolean blocked) {
+            this.blocked = blocked;
+            return this;
+        }
+
+        public Account build() {
+            return new Account(this);
+        }
+    }
+
+    // Getters & Setters
+    //========================================================
+    @JsonProperty
+    public int getAccountId() {
+        return accountId;
+    }
+
+    @JsonProperty
+    public int getUserId() {
+        return userId;
+    }
+
+    @JsonProperty
+    public int getBankId() {
+        return bankId;
+    }
+
+    @JsonProperty
+    public double getBalance() {
+        return balance;
+    }
+
+    @JsonProperty
+    public String getCurrency() {
+        return currency;
+    }
+
+    @JsonProperty
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    @JsonProperty
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public static void setIdGenerator(int maxId) {
+        ID_GENERATOR.set(maxId);
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    // JSON сериализация
+    @JsonIgnore
+    public String toJson() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации Account в JSON", e);
+        }
+    }
+}
+
+// Bank
+package com.example.lab_1.entities;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Bank {
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
+
+    private final int id;
+    private final String name;
+    private final String UNP;
+    private final String address;
+
+    public Bank() {
+        this.id = -1;
+        this.name = "";
+        this.UNP = "";
+        this.address = "";
+    }
+
+    @JsonCreator
+    public Bank(
+            @JsonProperty("id") int id,
+            @JsonProperty("name") String name,
+            @JsonProperty("UNP") String UNP,
+            @JsonProperty("address") String address
+    ) {
+        this.id = id;
+        this.name = name;
+        this.UNP = UNP;
+        this.address = address;
+    }
+
+    public static void setIdGenerator(int maxId) {
+        ID_GENERATOR.set(maxId);
+    }
+
+    // Builder
+    // ========================================
+    protected Bank(Builder builder) {
+        this.id = ID_GENERATOR.incrementAndGet();
+        this.name = builder.name;
+        this.UNP = builder.UNP;
+        this.address = builder.address;
+    }
+
+    public static class Builder {
+        private String name;
+        private String UNP;
+        private String address;
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder UNP(String UNP) {
+            this.UNP = UNP;
+            return this;
+        }
+
+        public Builder address(String address) {
+            this.address = address;
+            return this;
+        }
+
+        public Bank build() {
+            return new Bank(this);
+        }
+    }
+
+    // Getters
+    // ========================================
+    @JsonProperty
+    public int getId() {
+        return id;
+    }
+
+    @JsonProperty
+    public String getName() {
+        return name;
+    }
+
+    @JsonProperty
+    public String getUNP() {
+        return UNP;
+    }
+
+    @JsonProperty
+    public String getAddress() {
+        return address;
+    }
+
+    @JsonIgnore
+    public String toJson() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации Bank в JSON", e);
+        }
+    }
+}
+
+//Credit
+package com.example.lab_1.entities;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Credit {
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
+
+    private boolean isApproved;
+    private final int id;
+    private final int userId;
+    private final int bankId;
+    private final double amount;
+    private final double interestRate;
+    private final int term;
+    private final double monthlyPayment;
+
+    public Credit() {
+        this.id = -1;
+        this.userId = -1;
+        this.bankId = -1;
+        this.amount = 0;
+        this.interestRate = 0;
+        this.term = 0;
+        this.monthlyPayment = 0;
+        this.isApproved = false;
+    }
+
+    @JsonCreator
+    public Credit(
+            @JsonProperty("id") int id,
+            @JsonProperty("userId") int userId,
+            @JsonProperty("bankId") int bankId,
+            @JsonProperty("amount") double amount,
+            @JsonProperty("interestRate") double interestRate,
+            @JsonProperty("term") int term,
+            @JsonProperty("monthlyPayment") double monthlyPayment,
+            @JsonProperty("isApproved") boolean isApproved
+    ) {
+        this.id = id;
+        this.userId = userId;
+        this.bankId = bankId;
+        this.amount = amount;
+        this.interestRate = interestRate;
+        this.term = term;
+        this.monthlyPayment = monthlyPayment;
+        this.isApproved = isApproved;
+    }
+
+    protected Credit(Builder builder) {
+        this.id = ID_GENERATOR.incrementAndGet();
+        this.userId = builder.userId;
+        this.bankId = builder.bankId;
+        this.amount = builder.amount;
+        this.interestRate = builder.interestRate;
+        this.term = builder.term;
+        this.monthlyPayment = builder.monthlyPayment;
+        this.isApproved = builder.isApproved;
+    }
+
+    public static class Builder {
+        private int userId;
+        private int bankId;
+        private double amount;
+        private double interestRate;
+        private int term;
+        private double monthlyPayment;
+        private boolean isApproved;
+
+        public Builder isApproved(boolean isApproved) {
+            this.isApproved = isApproved;
+            return this;
+        }
+
+        public Builder userId(int userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder bankId(int bankId) {
+            this.bankId = bankId;
+            return this;
+        }
+
+        public Builder amount(double amount) {
+            this.amount = amount;
+            return this;
+        }
+
+        public Builder interestRate(double interestRate) {
+            this.interestRate = interestRate;
+            return this;
+        }
+
+        public Builder term(int term) {
+            this.term = term;
+            return this;
+        }
+
+        public Builder monthlyPayment(double monthlyPayment) {
+            this.monthlyPayment = monthlyPayment;
+            return this;
+        }
+
+        public Credit build() {
+            return new Credit(this);
+        }
+    }
+
+    // Getters
+    @JsonProperty
+    public boolean isApproved() {
+        return isApproved;
+    }
+
+    public static void setIdGenerator(int maxId) {
+        ID_GENERATOR.set(maxId);
+    }
+
+    @JsonProperty
+    public void setApproved(boolean approved) {
+        isApproved = approved;
+    }
+
+    @JsonProperty
+    public int getId() {
+        return id;
+    }
+
+    @JsonProperty
+    public int getUserId() {
+        return userId;
+    }
+
+    @JsonProperty
+    public int getBankId() {
+        return bankId;
+    }
+
+    @JsonProperty
+    public double getAmount() {
+        return amount;
+    }
+
+    @JsonProperty
+    public double getInterestRate() {
+        return interestRate;
+    }
+
+    @JsonProperty
+    public int getTerm() {
+        return term;
+    }
+
+    @JsonProperty
+    public double getMonthlyPayment() {
+        return monthlyPayment;
+    }
+
+    @JsonIgnore
+    public String toJson() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error serializing Credit to JSON", e);
+        }
+    }
+}
+
+
+//Enterprise
+package com.example.lab_1.entities;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Enterprise {
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
+
+    private final int id;
+    private final String name;
+    private final String unp;
+    private final String address;
+    private final String email;
+    private final int bankId;
+    private final int accountId;
+    private final int salaryProjectId;
+    private final boolean isVerified;
+
+    public Enterprise() {
+        this.id = -1;
+        this.name = "";
+        this.unp = "";
+        this.address = "";
+        this.email = "";
+        this.bankId = -1;
+        this.accountId = -1;
+        this.salaryProjectId = 0;
+        this.isVerified = false;
+    }
+
+    @JsonCreator
+    public Enterprise(
+            @JsonProperty("id") int id,
+            @JsonProperty("name") String name,
+            @JsonProperty("unp") String unp,
+            @JsonProperty("address") String address,
+            @JsonProperty("email") String email,
+            @JsonProperty("bankId") int bankId,
+            @JsonProperty("accountId") int accountId,
+            @JsonProperty("salaryProjectId") int salaryProjectId,
+            @JsonProperty("isVerified") boolean isVerified
+    ) {
+        this.id = id;
+        this.name = name;
+        this.unp = unp;
+        this.address = address;
+        this.email = email;
+        this.bankId = bankId;
+        this.accountId = accountId;
+        this.salaryProjectId = salaryProjectId;
+        this.isVerified = isVerified;
+    }
+
+    protected Enterprise(Builder builder) {
+        this.id = ID_GENERATOR.incrementAndGet();
+        this.name = builder.name;
+        this.unp = builder.unp;
+        this.address = builder.address;
+        this.email = builder.email;
+        this.bankId = builder.bankId;
+        this.accountId = builder.accountId;
+        this.salaryProjectId = builder.salaryProjectId;
+        this.isVerified = builder.isVerified;
+    }
+
+    public static class Builder {
+        private String name;
+        private String unp;
+        private String address;
+        private String email;
+        private int bankId;
+        private int accountId;
+        private int salaryProjectId;
+        private boolean isVerified;
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder unp(String unp) {
+            this.unp = unp;
+            return this;
+        }
+
+        public Builder address(String address) {
+            this.address = address;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder bankId(int bankId) {
+            this.bankId = bankId;
+            return this;
+        }
+
+        public Builder accountId(int accountId) {
+            this.accountId = accountId;
+            return this;
+        }
+
+        public Builder salaryProjectId(int salaryProjectId) {
+            this.salaryProjectId = salaryProjectId;
+            return this;
+        }
+
+        public Builder isVerified(boolean isVerified) {
+            this.isVerified = isVerified;
+            return this;
+        }
+
+        public Enterprise build() {
+            return new Enterprise(this);
+        }
+    }
+
+    // Getters
+    @JsonProperty
+    public int getId() {
+        return id;
+    }
+
+    @JsonProperty
+    public String getName() {
+        return name;
+    }
+
+    @JsonProperty
+    public String getUnp() {
+        return unp;
+    }
+
+    @JsonProperty
+    public String getAddress() {
+        return address;
+    }
+
+    @JsonProperty
+    public String getEmail() {
+        return email;
+    }
+
+    @JsonProperty
+    public int getBankId() {
+        return bankId;
+    }
+
+    @JsonProperty
+    public int getAccountId() {
+        return accountId;
+    }
+
+    @JsonProperty
+    public int getsalaryProjectId() {
+        return salaryProjectId;
+    }
+
+    @JsonProperty
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    @JsonIgnore
+    public String toJson() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации Enterprise в JSON", e);
+        }
+    }
+}
+
+// Log
+package com.example.lab_1.entities;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class LogEntry {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private final String actionType;
+    private final String targetIds;
+    private final String message;
+    private final String timestamp;
+    private boolean reversed;
+
+    @JsonCreator
+    public LogEntry(
+            @JsonProperty("actionType") String actionType,
+            @JsonProperty("targetIds") String targetIds,
+            @JsonProperty("message") String message,
+            @JsonProperty("timestamp") String timestamp,
+            @JsonProperty("reversed") boolean reversed
+    ) {
+        this.actionType = actionType;
+        this.targetIds = targetIds;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.reversed = reversed;
+    }
+
+    public LogEntry(String actionType, String targetIds, String message) {
+        this(actionType, targetIds, message, LocalDateTime.now().format(formatter), false);
+    }
+
+    @JsonProperty public String getActionType() { return actionType; }
+    @JsonProperty public String getTargetIds() { return targetIds; }
+    @JsonProperty public String getMessage() { return message; }
+    @JsonProperty public String getTimestamp() { return timestamp; }
+    @JsonProperty public boolean reversed() { return reversed; }
+
+    public void markReversed() { this.reversed = true; }
+
+    public String toJson() {
+        try {
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации LogEntry", e);
+        }
+    }
+
+    public static LogEntry fromJson(String json) {
+        try {
+            return objectMapper.readValue(json, LogEntry.class);
+        } catch (JsonProcessingException e) {
+            System.err.println("Ошибка при разборе JSON лога: " + json);
+            e.printStackTrace();
+            return null;
+        }
+    }
+}
+
+
+//Salary Project
+package com.example.lab_1.entities;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class SalaryProject {
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
+
+    private final int id;
+    private final int enterpriseId;
+    private final int bankId;
+    private boolean approved;
+
+    public SalaryProject() {
+        this.id = -1;
+        this.enterpriseId = -1;
+        this.bankId = -1;
+        this.approved = false;
+    }
+
+    @JsonCreator
+    public SalaryProject(
+            @JsonProperty("id") int id,
+            @JsonProperty("enterpriseId") int enterpriseId,
+            @JsonProperty("bankId") int bankId,
+            @JsonProperty("approved") boolean approved
+    ) {
+        this.id = id;
+        this.enterpriseId = enterpriseId;
+        this.bankId = bankId;
+        this.approved = approved;
+    }
+
+    protected SalaryProject(Builder builder) {
+        this.id = ID_GENERATOR.incrementAndGet();
+        this.enterpriseId = builder.enterpriseId;
+        this.bankId = builder.bankId;
+        this.approved = builder.approved;
+    }
+
+    public static class Builder {
+        private int enterpriseId;
+        private int bankId;
+        private boolean approved;
+
+        public Builder enterpriseId(int enterpriseId) {
+            this.enterpriseId = enterpriseId;
+            return this;
+        }
+
+        public Builder bankId(int bankId) {
+            this.bankId = bankId;
+            return this;
+        }
+
+        public Builder approved(boolean approved) {
+            this.approved = approved;
+            return this;
+        }
+
+        public SalaryProject build() {
+            return new SalaryProject(this);
+        }
+    }
+
+    public static void setIdGenerator(int maxId) {
+        ID_GENERATOR.set(maxId);
+    }
+
+    @JsonProperty
+    public int getId() {
+        return id;
+    }
+
+    @JsonProperty
+    public int getEnterpriseId() {
+        return enterpriseId;
+    }
+
+    @JsonProperty
+    public int getBankId() {
+        return bankId;
+    }
+
+    @JsonProperty
+    public boolean approved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    @JsonIgnore
+    public String toJson() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации SalaryProject в JSON", e);
+        }
+    }
+}
+
+
+// Transfer
+package com.example.lab_1.entities;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Transfer {
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
+
+    private final int id;
+    private final int sourceAccount;
+    private final int destinationAccount;
+    private final int amount;
+
+    public Transfer() {
+        this.id = -1;
+        this.sourceAccount = -1;
+        this.destinationAccount = -1;
+        this.amount = 0;
+    }
+
+    @JsonCreator
+    public Transfer(
+            @JsonProperty("id") int id,
+            @JsonProperty("sourceAccount") int sourceAccount,
+            @JsonProperty("destinationAccount") int destinationAccount,
+            @JsonProperty("amount") int amount
+    ) {
+        this.id = id;
+        this.sourceAccount = sourceAccount;
+        this.destinationAccount = destinationAccount;
+        this.amount = amount;
+    }
+
+    protected Transfer(Builder builder) {
+        this.id = ID_GENERATOR.incrementAndGet();
+        this.sourceAccount = builder.sourceAccount;
+        this.destinationAccount = builder.destinationAccount;
+        this.amount = builder.amount;
+    }
+
+    public static class Builder {
+        private int sourceAccount;
+        private int destinationAccount;
+        private int amount;
+
+        public Builder sourceAccount(int sourceAccount) {
+            this.sourceAccount = sourceAccount;
+            return this;
+        }
+
+        public Builder destinationAccount(int destinationAccount) {
+            this.destinationAccount = destinationAccount;
+            return this;
+        }
+
+        public Builder amount(int amount) {
+            this.amount = amount;
+            return this;
+        }
+
+        public Transfer build() {
+            return new Transfer(this);
+        }
+    }
+
+    // Getters
+    @JsonProperty
+    public int getId() {
+        return id;
+    }
+
+    public static void setIdGenerator(int maxId) {
+        ID_GENERATOR.set(maxId);
+    }
+
+
+    @JsonProperty
+    public int getSourceAccount() {
+        return sourceAccount;
+    }
+
+    @JsonProperty
+    public int getDestinationAccount() {
+        return destinationAccount;
+    }
+
+    @JsonProperty
+    public int getAmount() {
+        return amount;
+    }
+
+    // JSON serialization
+    @JsonIgnore
+    public String toJson() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error serializing Transfer to JSON", e);
+        }
+    }
+}
+
+//User
+package com.example.lab_1.entities;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
+import java.util.Map;
+
+public class User {
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
+
+    private final String lastName;
+    private final String firstName;
+    private final String fatherName;
+    private final String email;
+    private final String phone;
+    private final String passport;
+    private String password;
+    private final int id;
+
+    public User() {
+        this.lastName = "";
+        this.firstName = "";
+        this.fatherName = "";
+        this.email = "";
+        this.phone = "";
+        this.passport = "";
+        this.password = "";
+        this.id = -1;
+    }
+
+    @JsonCreator
+    public User(
+            @JsonProperty("lastName") String lastName,
+            @JsonProperty("firstName") String firstName,
+            @JsonProperty("fatherName") String fatherName,
+            @JsonProperty("email") String email,
+            @JsonProperty("phone") String phone,
+            @JsonProperty("passport") String passport,
+            @JsonProperty("password") String password,
+            @JsonProperty("id") int id
+    ) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.fatherName = fatherName;
+        this.email = email;
+        this.phone = phone;
+        this.passport = passport;
+        this.password = password;
+        this.id = id;
+    }
+
+    //Builder realization
+    //=========================================
+    protected User(Builder<?> builder) {
+        this.lastName = builder.lastName;
+        this.firstName = builder.firstName;
+        this.fatherName = builder.fatherName;
+        this.email = builder.email;
+        this.phone = builder.phone;
+        this.passport = builder.passport;
+        this.password = builder.password;
+        this.id = ID_GENERATOR.incrementAndGet();
+    }
+
+    public static class Builder<T extends Builder<T>> {
+        private String lastName;
+        private String firstName;
+        private String fatherName;
+        private String email;
+        private String phone;
+        private String passport;
+        private String password;
+
+
+        public Builder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder fatherName(String fatherName) {
+            this.fatherName = fatherName;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public Builder passport(String passport) {
+            this.passport = passport;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+
+        public User build(){
+            return new User(this);
+        }
+    }
+    //=================================================
+
+    //Getters and Setters
+    //==================================================
+    @JsonProperty
+    public String getPassword() {
+        return password;
+    }
+
+    public static void setIdGenerator(int maxId) {
+        ID_GENERATOR.set(maxId);
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @JsonProperty
+    public String getLastName() {
+        return lastName;
+    }
+
+    @JsonProperty
+    public String getFirstName() {
+        return firstName;
+    }
+
+    @JsonProperty
+    public String getFatherName() {
+        return fatherName;
+    }
+
+    @JsonProperty
+    public String getEmail() {
+        return email;
+    }
+
+    @JsonProperty
+    public String getPhone() {
+        return phone;
+    }
+
+    @JsonProperty
+    public String getPassport() {
+        return passport;
+    }
+
+    @JsonProperty
+    public int getId() {
+        return id;
+    }
+
+    @JsonIgnore
+    public String toJson() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации User в JSON", e);
+        }
+    }
+}
+
+
+
+
+
+#### Repository layer
+
+//Account
+
+package com.example.lab_1.repositories.Interfaces;
+
+import com.example.lab_1.entities.Account;
+import java.util.List;
+import java.util.Optional;
+
+public interface AccountRepository {
+    int getAccountsByBankIdAndUserId(String bankId, String userId);
+    void save(Account account);
+    boolean delete(String id);
+    void update(int sourceAccount, int destinationAccount, int amount);
+    void update(int sourceAccount, int amount);
+    void updateSalary(int destinationAccount, int amount);
+    Optional<Account> findById(String id);
+    List<Account> findAll();
+    int getMaxAccountId();
+    List<Account> findByUserId(String userId);
+    List<Account> findByBankId(String bankId);
+}
+
+package com.example.lab_1.repositories;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.json.JsonObject;
+import com.example.lab_1.services.AccountService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.lab_1.entities.Account;
+import com.example.lab_1.infrastructure.CouchbaseConnection;
+import com.example.lab_1.repositories.Interfaces.AccountRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class CouchbaseAccountRepository implements AccountRepository {
+    private final Bucket bucket;
+    private final Collection collection;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public CouchbaseAccountRepository() {
+        this.bucket = CouchbaseConnection.getBucket();
+        this.collection = bucket.scope("_default").collection("accounts");
+    }
+
+    @Override
+    public void updateSalary(int destinationAccountId, int amount) {
+        Account destinationAccount;
+        if(AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).isPresent())
+            destinationAccount = AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).get();
+        else return;
+
+        destinationAccount.setBalance(destinationAccount.getBalance() + amount);
+
+        save(destinationAccount);
+    }
+
+    @Override
+    public void update(int sourceAccountId, int amount){
+        Account sourceAccount;
+        if(AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).isPresent())
+            sourceAccount = AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).get();
+        else return;
+
+        sourceAccount.setBalance(sourceAccount.getBalance() - amount);
+        save(sourceAccount);
+    }
+
+    @Override
+    public void update(int sourceAccountId, int destinationAccountId, int amount){
+        Account sourceAccount;
+        Account destinationAccount;
+
+        if(AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).isPresent())
+            sourceAccount = AccountService.getInstance().getAccountById(String.valueOf(sourceAccountId)).get();
+        else return;
+
+        if(AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).isPresent())
+            destinationAccount = AccountService.getInstance().getAccountById(String.valueOf(destinationAccountId)).get();
+        else return;
+
+        sourceAccount.setBalance(sourceAccount.getBalance() - amount);
+        destinationAccount.setBalance(destinationAccount.getBalance() + amount);
+
+        save(sourceAccount);
+        save(destinationAccount);
+    }
+
+    @Override
+    public int getMaxAccountId(){
+        String query = "SELECT MAX(accountId) AS maxId FROM `Lab_1`.`_default`.`accounts`";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getInt("maxId"))
+                .orElse(0);
+    }
+
+    @Override
+    public int getAccountsByBankIdAndUserId(String bankId, String userId) {
+        String query = "Select accounts.* from `Lab_1`.`_default`.`accounts` where bankId = " + bankId + " and userId = " + userId;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        List<Integer> accounts = new ArrayList<>();
+        result.rowsAsObject().forEach(row -> {
+            accounts.add(row.getInt("accountId"));
+        });
+
+        accounts.sort(Integer::compareTo);
+        return accounts.isEmpty() ? 0 : accounts.getFirst();
+    }
+
+    @Override
+    public void save(Account account) {
+        collection.upsert(String.valueOf(account.getAccountId()), account);
+    }
+
+    @Override
+    public boolean delete(String id) {
+        try {
+            collection.remove(id);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Optional<Account> findById(String id) {
+        List<Account> accounts = new ArrayList<>();
+        try {
+            String query = "SELECT accounts.* FROM `Lab_1`.`_default`.`accounts` WHERE accountId = " + id;
+            QueryResult result = CouchbaseConnection.getCluster().query(query,
+                    QueryOptions.queryOptions().parameters(JsonObject.create().put("id", id)));
+
+            result.rowsAsObject().forEach(row -> {
+                try {
+                    Account account = mapper.readValue(row.toString(), Account.class);
+                    accounts.add(account);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            return accounts.stream().findFirst();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+
+    @Override
+    public List<Account> findAll() {
+        List<Account> accounts = new ArrayList<>();
+        String query = "SELECT accounts.* FROM `Lab_1`.`_default`.`accounts` accounts";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Account account = mapper.readValue(row.toString(), Account.class);
+                accounts.add(account);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return accounts;
+    }
+
+    @Override
+    public List<Account> findByUserId(String userId) {
+        List<Account> accounts = new ArrayList<>();
+        String query = "SELECT accounts.* " +
+                "FROM `Lab_1`.`_default`.`accounts` accounts " +
+                "WHERE accounts.userId = $userId";
+
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query,
+                QueryOptions.queryOptions().parameters(
+                        JsonObject.create().put("userId", Integer.valueOf(userId))
+                )
+        );
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Account account = mapper.readValue(row.toString(), Account.class);
+                accounts.add(account);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return accounts;
+    }
+
+    @Override
+    public List<Account> findByBankId(String bankId) {
+        List<Account> accounts = new ArrayList<>();
+        String query = "SELECT accounts.* " +
+                "FROM `Lab_1`.`_default`.`accounts` accounts " +
+                "WHERE accounts.bankId = $bankId";
+
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query,
+                QueryOptions.queryOptions().parameters(
+                        JsonObject.create().put("bankId", Integer.valueOf(bankId))
+                )
+        );
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Account account = mapper.readValue(row.toString(), Account.class);
+                accounts.add(account);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return accounts;
+    }
+}
+
+
+//Bank
+package com.example.lab_1.repositories.Interfaces;
+
+import com.example.lab_1.entities.Bank;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface BankRepository {
+    void save(Bank bank);
+    void delete(String id);
+    Optional<Bank> findById(String id);
+    List<Bank> findAll();
+}
+package com.example.lab_1.repositories;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.query.QueryResult;
+import com.example.lab_1.repositories.Interfaces.BankRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.lab_1.entities.Bank;
+import com.example.lab_1.infrastructure.CouchbaseConnection;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.ArrayList;
+
+public class CouchbaseBankRepository implements BankRepository {
+    private final Bucket bucket;
+    private final Collection collection;
+
+    public CouchbaseBankRepository() {
+        this.bucket = CouchbaseConnection.getBucket();
+        this.collection = bucket.scope("_default").collection("banks");
+    }
+
+    @Override
+    public void save(Bank bank) {
+        collection.upsert(String.valueOf(bank.getId()), bank.toJson());
+    }
+
+    @Override
+    public Optional<Bank> findById(String id) {
+        try {
+            GetResult result = collection.get(id);
+            String json = result.contentAs(String.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+            Bank bank = objectMapper.readValue(json, Bank.class);
+            return Optional.of(bank);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<Bank> findAll() {
+        List<Bank> banks = new ArrayList<>();
+        String query = "SELECT banks.* FROM `Lab_1`.`_default`.`banks`";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Bank bank = objectMapper.readValue(row.toString(), Bank.class);
+                banks.add(bank);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        return banks;
+    }
+
+    @Override
+    public void delete(String id) {
+        collection.remove(id);
+    }
+}
+
+
+//Credit
+package com.example.lab_1.repositories.Interfaces;
+
+import com.example.lab_1.entities.Credit;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface CreditRepository {
+    void save(Credit credit);
+    Optional<Credit> findById(String id);
+    List<Credit> findAll();
+    List<Credit> findByBankId(String bankId);
+    void approveCredit(String id);
+    boolean delete(String id);
+    List<Credit> findByUserId(String userId);
+    int getMaxCreditId();
+}
+
+
+package com.example.lab_1.repositories;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.json.JsonObject;
+import com.example.lab_1.entities.Credit;
+import com.example.lab_1.infrastructure.CouchbaseConnection;
+import com.example.lab_1.repositories.Interfaces.CreditRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class CouchbaseCreditRepository implements CreditRepository {
+    private final Bucket bucket;
+    private final Collection collection;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public CouchbaseCreditRepository() {
+        this.bucket = CouchbaseConnection.getBucket();
+        this.collection = bucket.scope("_default").collection("credits");
+    }
+
+    @Override
+    public int getMaxCreditId(){
+        String query = "SELECT MAX(id) as maxId FROM `Lab_1`.`_default`.`credits`";
+
+        var result = CouchbaseConnection.getCluster().query(query);
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getInt("maxId"))
+                .orElse(0);
+    }
+
+    @Override
+    public void save(Credit credit) {
+        collection.upsert(String.valueOf(credit.getId()), credit);
+    }
+
+    public void update(Credit credit) {
+        collection.replace(String.valueOf(credit.getId()), credit);
+    }
+
+    @Override
+    public Optional<Credit> findById(String id) {
+        String query = "SELECT credits.* FROM `Lab_1`.`_default`.`credits` credits WHERE credits.id = $id";
+        QueryResult result = CouchbaseConnection.getCluster().query(query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("id", Integer.valueOf(id))));
+
+        List<Credit> credits = new ArrayList<>();
+        result.rowsAsObject().forEach(row -> {
+            try{
+                Credit credit = mapper.readValue(row.toString(), Credit.class);
+                credits.add(credit);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        return Optional.ofNullable(credits.getFirst());
+    }
+
+    @Override
+    public List<Credit> findAll() {
+        List<Credit> credits = new ArrayList<>();
+        String query = "SELECT credits.* FROM `Lab_1`.`_default`.`credits` credits";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Credit credit = mapper.readValue(row.toString(), Credit.class);
+                credits.add(credit);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return credits;
+    }
+
+    @Override
+    public boolean delete(String id) {
+        try {
+            collection.remove(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<Credit> findByUserId(String userId) {
+        List<Credit> credits = new ArrayList<>();
+        String query = "SELECT credits.* FROM `Lab_1`.`_default`.`credits` credits WHERE credits.userId = $userId";
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("userId", Integer.valueOf(userId)))
+        );
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Credit credit = mapper.readValue(row.toString(), Credit.class);
+                credits.add(credit);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return credits;
+    }
+
+    @Override
+    public List<Credit> findByBankId(String userId) {
+        List<Credit> credits = new ArrayList<>();
+        String query = "SELECT credits.* FROM `Lab_1`.`_default`.`credits` credits WHERE credits.bankId = $userId";
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("userId", Integer.valueOf(userId)))
+        );
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Credit credit = mapper.readValue(row.toString(), Credit.class);
+                credits.add(credit);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return credits;
+    }
+
+    @Override
+    public void approveCredit(String id) {
+        findById(id).ifPresent(credit -> {
+            credit.setApproved(true);
+            update(credit);
+        });
+    }
+}
+
+
+//Enterprise
+package com.example.lab_1.repositories.Interfaces;
+
+import com.example.lab_1.entities.Enterprise;
+import java.util.List;
+import java.util.Optional;
+
+public interface EnterpriseRepository {
+    Optional<Enterprise> getEnterpriseByName(String name);
+    void save(Enterprise enterprise);
+    Optional<Enterprise> findById(String id);
+    List<Enterprise> findAll();
+    void delete(String id);
+    List<Enterprise> findByBankId(String bankId);
+    List<Enterprise> findUnverifiedEnterprises();
+}
+
+package com.example.lab_1.repositories;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.json.JsonObject;
+import com.example.lab_1.entities.Enterprise;
+import com.example.lab_1.entities.User;
+import com.example.lab_1.infrastructure.CouchbaseConnection;
+import com.example.lab_1.repositories.Interfaces.EnterpriseRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class CouchbaseEnterpriseRepository implements EnterpriseRepository {
+    private final Bucket bucket;
+    private final Collection collection;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public CouchbaseEnterpriseRepository() {
+        this.bucket = CouchbaseConnection.getBucket();
+        this.collection = bucket.scope("_default").collection("enterprises"); // Коллекция в БД
+    }
+
+    @Override
+    public Optional<Enterprise> getEnterpriseByName(String name) {
+        List<Enterprise> enterprises = new ArrayList<>();
+        String query = "SELECT enterprises.* FROM `Lab_1`.`_default`.`enterprises` WHERE name = $name";
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query, QueryOptions.queryOptions().parameters(JsonObject.create().put("name", name)));
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                var enterprise = mapper.readValue(row.toString(), Enterprise.class);
+                enterprises.add(enterprise);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        return enterprises.stream().findFirst();
+    }
+
+    @Override
+    public void save(Enterprise enterprise) {
+        collection.upsert(String.valueOf(enterprise.getId()), enterprise);
+    }
+
+    @Override
+    public Optional<Enterprise> findById(String id) {
+        List<Enterprise> enterprises = new ArrayList<>();
+        String query = "Select enterprises.* from `Lab_1`.`_default`.`enterprises` where id = " + id;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Enterprise enterprise = mapper.readValue(row.toString(), Enterprise.class);
+                enterprises.add(enterprise);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        return enterprises.stream().findFirst();
+    }
+
+    @Override
+    public List<Enterprise> findAll() {
+        List<Enterprise> enterprises = new ArrayList<>();
+        String query = "SELECT enterprises.* FROM `Lab_1`.`_default`.`enterprises`";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Enterprise enterprise = mapper.readValue(row.toString(), Enterprise.class);
+                enterprises.add(enterprise);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return enterprises;
+    }
+
+    @Override
+    public void delete(String id) {
+        collection.remove(id);
+    }
+
+    @Override
+    public List<Enterprise> findByBankId(String bankId) {
+        List<Enterprise> enterprises = new ArrayList<>();
+        String query = "SELECT enterprises.* FROM `Lab_1`.`_default`.`enterprises` WHERE bankId = " + bankId;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Enterprise enterprise = mapper.readValue(row.toString(), Enterprise.class);
+                enterprises.add(enterprise);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return enterprises;
+    }
+
+    @Override
+    public List<Enterprise> findUnverifiedEnterprises() {
+        List<Enterprise> enterprises = new ArrayList<>();
+        String query = "SELECT enterprises.* FROM `Lab_1`.`_default`.`enterprises` WHERE isVerified = false";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Enterprise enterprise = mapper.readValue(row.toString(), Enterprise.class);
+                enterprises.add(enterprise);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return enterprises;
+    }
+}
+
+
+//SalaryProject
+package com.example.lab_1.repositories.Interfaces;
+
+import com.example.lab_1.entities.SalaryProject;
+import com.example.lab_1.entities.User;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface SalaryProjectRepository {
+    List<Integer> getUsersOfSalaryProject(String salaryProjectId);
+    int getMaxSalaryProjectId();
+    void save(SalaryProject salaryProject);
+    Optional<SalaryProject> findById(String id);
+    Optional<SalaryProject> findByEnterpriseId(String enterpriseId);
+    List<SalaryProject> findAll();
+    boolean delete(String id);
+    void replace(SalaryProject salaryProject);
+    List<SalaryProject> findByUserId(String userId);
+    List<SalaryProject> findByBankId(String bankId);
+    List<SalaryProject> findPendingApprovals(String bankId);
+}
+
+
+package com.example.lab_1.repositories;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.json.JsonObject;
+import com.example.lab_1.entities.Enterprise;
+import com.example.lab_1.entities.SalaryProject;
+import com.example.lab_1.entities.User;
+import com.example.lab_1.infrastructure.CouchbaseConnection;
+import com.example.lab_1.repositories.Interfaces.SalaryProjectRepository;
+import com.example.lab_1.services.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class CouchbaseSalaryProjectRepository implements SalaryProjectRepository {
+    private final Bucket bucket;
+    private final Collection collection;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public CouchbaseSalaryProjectRepository() {
+        this.bucket = CouchbaseConnection.getBucket();
+        this.collection = bucket.scope("_default").collection("salary_projects"); // Коллекция в БД
+    }
+
+    @Override
+    public void save(SalaryProject salaryProject) {
+        collection.upsert(String.valueOf(salaryProject.getId()), salaryProject);
+    }
+
+    @Override
+    public Optional<SalaryProject> findById(String id) {
+        List<SalaryProject> salaryProjects = new ArrayList<>();
+        String query = "Select salary_projects.* from `Lab_1`.`_default`.`salary_projects` where id = " + id;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                SalaryProject salaryProject = mapper.readValue(row.toString(), SalaryProject.class);
+                salaryProjects.add(salaryProject);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        return salaryProjects.stream().findFirst();
+    }
+
+    @Override
+    public Optional<SalaryProject> findByEnterpriseId(String enterpriseId) {
+        List<SalaryProject> salaryProjects = new ArrayList<>();
+
+        String query = "SELECT salary_projects.* FROM `Lab_1`.`_default`.`salary_projects` where enterpriseId = " + enterpriseId;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                SalaryProject salaryProject = mapper.readValue(row.toString(), SalaryProject.class);
+                salaryProjects.add(salaryProject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        return salaryProjects.isEmpty() ? Optional.empty() : Optional.of(salaryProjects.get(0));
+    }
+
+    @Override
+    public List<SalaryProject> findAll() {
+        List<SalaryProject> salaryProjects = new ArrayList<>();
+        String query = "SELECT salary_projects.* FROM `Lab_1`.`_default`.`salary_projects`";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+        result.rowsAsObject().forEach(row -> {
+            try {
+                SalaryProject salaryProject = mapper.readValue(row.toString(), SalaryProject.class);
+                salaryProjects.add(salaryProject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return salaryProjects;
+    }
+
+    @Override
+    public boolean delete(String id) {
+        try {
+            collection.remove(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public void replace(SalaryProject salaryProject) {
+        collection.replace(String.valueOf(salaryProject.getId()), salaryProject);
+    }
+
+    @Override
+    public List<SalaryProject> findByUserId(String userId) {
+        List<SalaryProject> salaryProjects = new ArrayList<>();
+        String query = "SELECT salary_projects.* FROM `Lab_1`.`_default`.`salary_projects` WHERE userId = $userId";
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query, QueryOptions.queryOptions().parameters(JsonObject.create().put("userId", Integer.valueOf(userId)))
+        );
+        result.rowsAsObject().forEach(row -> {
+            try {
+                SalaryProject salaryProject = mapper.readValue(row.toString(), SalaryProject.class);
+                salaryProjects.add(salaryProject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return salaryProjects;
+    }
+
+    @Override
+    public List<SalaryProject> findByBankId(String bankId) {
+        List<SalaryProject> salaryProjects = new ArrayList<>();
+        String query = "SELECT salary_projects.* FROM `Lab_1`.`_default`.`salary_projects` WHERE bankId = $bankId";
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query, QueryOptions.queryOptions().parameters(JsonObject.create().put("bankId", Integer.valueOf(bankId)))
+        );
+        result.rowsAsObject().forEach(row -> {
+            try {
+                SalaryProject salaryProject = mapper.readValue(row.toString(), SalaryProject.class);
+                salaryProjects.add(salaryProject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return salaryProjects;
+    }
+
+    @Override
+    public List<SalaryProject> findPendingApprovals(String bankId) {
+        List<SalaryProject> salaryProjects = new ArrayList<>();
+        String query = "SELECT salary_projects.* FROM `Lab_1`.`_default`.`salary_projects` WHERE approved = false and bankId = " + bankId;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+        result.rowsAsObject().forEach(row -> {
+            try {
+                SalaryProject salaryProject = mapper.readValue(row.toString(), SalaryProject.class);
+                salaryProjects.add(salaryProject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return salaryProjects;
+    }
+
+    @Override
+    public List<Integer> getUsersOfSalaryProject(String salaryProjectId) {
+        String query = "SELECT user_salaryPrj.* FROM `Lab_1`.`_default`.`user_salaryPrj` where salaryProjectId = " + salaryProjectId;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        List<Integer> users = new ArrayList<>();
+        result.rowsAsObject().forEach(row -> {
+            try{
+                int userId = row.getInt("userId");
+                users.add(userId);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        });
+
+        return users;
+    }
+
+    @Override
+    public int getMaxSalaryProjectId() {
+        String query = "SELECT MAX(id) AS maxId FROM `Lab_1`.`_default`.`salary_projects`";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getInt("maxId"))
+                .orElse(0);
+    }
+}
+
+
+//Transfer
+package com.example.lab_1.repositories.Interfaces;
+
+import com.example.lab_1.entities.Transfer;
+import com.example.lab_1.services.TransferService;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface TransferRepository {
+    void save(Transfer transfer);
+    void delete(String id);
+    Optional<Transfer> findById(String id);
+    List<Transfer> findByBankAndEnterprise(String bankId);
+    List<Transfer> findAll();
+    int getMaxTransferId();
+    List<Transfer> findByDestinationAccount(String destinationAccount);
+    List<Transfer> findBySourceAccount(String sourceAccount);
+    List<Transfer> findByBank(String bankId);
+}
+
+package com.example.lab_1.repositories;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.json.JsonObject;
+import com.example.lab_1.entities.Account;
+import com.example.lab_1.services.AccountService;
+import com.example.lab_1.services.EnterpriseService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.lab_1.entities.Transfer;
+import com.example.lab_1.infrastructure.CouchbaseConnection;
+import com.example.lab_1.repositories.Interfaces.TransferRepository;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
+public class CouchbaseTransferRepository implements TransferRepository {
+    private final Bucket bucket;
+    private final Collection collection;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public CouchbaseTransferRepository() {
+        this.bucket = CouchbaseConnection.getBucket();
+        this.collection = bucket.scope("_default").collection("transfers");
+    }
+
+    @Override
+    public int getMaxTransferId() {
+        String query = "SELECT MAX(id) AS maxId FROM `Lab_1`.`_default`.`transfers`";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getInt("maxId"))
+                .orElse(0);
+    }
+
+    @Override
+    public void save(Transfer transfer) {
+        collection.upsert(String.valueOf(transfer.getId()), transfer);
+    }
+
+    @Override
+    public void delete(String id) {
+        collection.remove(String.valueOf(id));
+    }
+
+    @Override
+    public Optional<Transfer> findById(String id) {
+        List<Transfer> transfers = new ArrayList<>();
+        try {
+            String query = "SELECT transfers.* FROM `Lab_1`.`_default`.`transfers` WHERE id = " + id;
+            QueryResult result = CouchbaseConnection.getCluster().query(query,
+                    QueryOptions.queryOptions().parameters(JsonObject.create().put("id", id)));
+
+            result.rowsAsObject().forEach(row -> {
+                try {
+                    Transfer transfer = mapper.readValue(row.toString(), Transfer.class);
+                    transfers.add(transfer);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            return transfers.stream().findFirst();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+
+    @Override
+    public List<Transfer> findAll() {
+        List<Transfer> transfers = new ArrayList<>();
+        String query = "SELECT transfers.* FROM `Lab_1`.`_default`.`transfers` transfers";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Transfer transfer = mapper.readValue(row.toString(), Transfer.class);
+                transfers.add(transfer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return transfers;
+    }
+
+    @Override
+    public List<Transfer> findBySourceAccount(String sourceAccount) {
+        List<Transfer> transfers = new ArrayList<>();
+        String query = "SELECT transfers.* " +
+                "FROM `Lab_1`.`_default`.`transfers` transfers " +
+                "WHERE transfers.sourceAccount = $sourceAccount";
+
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query,
+                QueryOptions.queryOptions().parameters(
+                        JsonObject.create().put("sourceAccount", sourceAccount)
+                )
+        );
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Transfer transfer = mapper.readValue(row.toString(), Transfer.class);
+                transfers.add(transfer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return transfers;
+    }
+
+    @Override
+    public List<Transfer> findByBankAndEnterprise(String bankId) {
+        var enterprises = EnterpriseService.getInstance().getEnterprisesByBankId(bankId);
+        List<Transfer> transfers = new ArrayList<>();
+
+        enterprises.forEach(enterpriseId1 -> {
+            String query = "Select transfers.* FROM `Lab_1`.`_default`.`transfers`" +
+                    " where destinationAccount = " + -enterpriseId1.getId() +
+                    " or sourceAccount = " + -enterpriseId1.getId();
+            QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+            result.rowsAsObject().forEach(row -> {
+                try {
+                    Transfer transfer = mapper.readValue(row.toString(), Transfer.class);
+                    transfers.add(transfer);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+
+        return transfers;
+    }
+
+    @Override
+    public List<Transfer> findByBank(String bankId) {
+        var allTransfers = findAll();
+
+        List<Transfer> validTransfers = new ArrayList<>();
+        for (Transfer transfer : allTransfers) {
+            String destinId = String.valueOf(transfer.getDestinationAccount());
+            String sourceId = String.valueOf(transfer.getSourceAccount());
+
+            if(Integer.parseInt(destinId) <= 0 || Integer.parseInt(sourceId) <= 0) {
+                continue;
+            }
+
+            Account destinAccount;
+            Account sourceAccount;
+
+            if(AccountService.getInstance().getAccountById(destinId).isPresent())
+                destinAccount = AccountService.getInstance().getAccountById(destinId).get();
+            else continue;
+
+            if(AccountService.getInstance().getAccountById(sourceId).isPresent())
+                sourceAccount = AccountService.getInstance().getAccountById(sourceId).get();
+            else continue;
+
+            boolean destAccountMatches = bankId.equals(String.valueOf(destinAccount.getBankId()));
+            boolean sourceAccountMatches = bankId.equals(String.valueOf(sourceAccount.getBankId()));
+
+            if(destAccountMatches || sourceAccountMatches) {
+                validTransfers.add(transfer);
+            }
+        }
+
+        validTransfers.sort(Comparator.comparing(Transfer::getId));
+        return validTransfers;
+    }
+
+    @Override
+    public List<Transfer> findByDestinationAccount(String destinationAccount) {
+        List<Transfer> transfers = new ArrayList<>();
+        String query = "SELECT transfers.* " +
+                "FROM `Lab_1`.`_default`.`transfers` transfers " +
+                "WHERE transfers.destinationAccount = $destinationAccount";
+
+        QueryResult result = CouchbaseConnection.getCluster().query(
+                query,
+                QueryOptions.queryOptions().parameters(
+                        JsonObject.create().put("destinationAccount", destinationAccount)
+                )
+        );
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                Transfer transfer = mapper.readValue(row.toString(), Transfer.class);
+                transfers.add(transfer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return transfers;
+    }
+}
+
+//UserBankEnterprise (спользуется для реализации связи многие ко многим, это сообщение в скобочках для тебя не нужно его никуда добавлять)
+package com.example.lab_1.repositories.Interfaces;
+
+public interface UserBankEnterpriseRepository {
+    void saveInfo(String userId, String bankId, String enterpriseId);
+    int getEnterpriseByUserAndBankId(String userId, String bankId);
+}
+
+package com.example.lab_1.repositories;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.json.JsonObject;
+import com.example.lab_1.infrastructure.CouchbaseConnection;
+import com.example.lab_1.repositories.Interfaces.UserBankEnterpriseRepository;
+
+public class CouchBaseUserBankEnterpriseRepository implements UserBankEnterpriseRepository {
+    private final Collection collection;
+
+    public CouchBaseUserBankEnterpriseRepository() {
+        Bucket bucket = CouchbaseConnection.getBucket();
+        this.collection = bucket.scope("_default").collection("user_bank_enterprise");
+    }
+
+    @Override
+    public void saveInfo(String userId, String bankId, String enterpriseId) {
+        JsonObject json = JsonObject.create()
+                .put("userId", Integer.parseInt(userId))
+                .put("bankId", Integer.parseInt(bankId))
+                .put("enterpriseId", Integer.parseInt(enterpriseId));
+
+        String new_id = userId + "_" + bankId + "_" + enterpriseId;
+        collection.upsert(new_id, json);
+    }
+
+    @Override
+    public int getEnterpriseByUserAndBankId(String userId, String bankId) {
+        String query = "select user_bank_enterprise.* from `Lab_1`.`_default`.`user_bank_enterprise`" +
+                " where userId = " + userId + " and bankId = " + bankId;
+        var result = CouchbaseConnection.getCluster().query(query);
+
+        return result.rowsAsObject().stream()
+                .findFirst()
+                .map(row -> row.getInt("enterpriseId"))
+                .orElse(0);
+    }
+}
+
+
+//UserBank(Еще один класс для реализации зависимости)
+
+package com.example.lab_1.repositories.Interfaces;
+
+import com.example.lab_1.entities.User;
+
+import java.util.List;
+
+public interface UserBankRepository {
+    boolean deleteUser(String userId, String bankId);
+    void saveRole(String bank_id, String user_id, String role, boolean IsApproved);
+    String getUserRoleByID(String user_id, String bank_id);
+    boolean IsApproved(String userId, String bankId);
+    void rejectUser(String userId, String bankId);
+    void approveUser(String userId, String bankId);
+    List<Integer> getPendingUsersIds(String bankId);
+}
+
+package com.example.lab_1.repositories;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+
+import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.json.JsonObject;
+import com.example.lab_1.entities.User;
+import com.example.lab_1.infrastructure.CouchbaseConnection;
+import com.example.lab_1.repositories.Interfaces.UserBankRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+public class CouchbaseUserBankRepository implements UserBankRepository {
+    private final Collection collection;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public CouchbaseUserBankRepository() {
+        Bucket bucket = CouchbaseConnection.getBucket();
+        this.collection = bucket.scope("_default").collection("user_bank");
+    }
+
+    @Override
+    public String getUserRoleByID(String user_id, String bank_id){
+        String query = "Select user_bank.* from `Lab_1`.`_default`.`user_bank` where user_id = " + user_id + " and bank_id = " + bank_id;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getString("role"))
+                .orElse(null);
+    }
+
+    @Override
+    public boolean IsApproved(String userId, String bankId) {
+        String query = "Select user_bank.* from `Lab_1`.`_default`.`user_bank` where user_id = " + userId + " and bank_id = " + bankId;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getBoolean("IsApproved"))
+                .orElse(false);
+    }
+
+    @Override
+    public void rejectUser(String userId, String bankId) {
+        collection.remove(userId + "_" + bankId);
+    }
+
+    @Override
+    public void approveUser(String userId, String bankId) {
+        String role = getUserRoleByID(userId, bankId);
+        JsonObject json = JsonObject.create()
+                .put("user_id", Integer.parseInt(userId))
+                .put("bank_id", Integer.parseInt(bankId))
+                .put("role", role)
+                .put("IsApproved", true);
+
+        collection.replace(userId + "_" + bankId, json);
+    }
+
+    @Override
+    public List<Integer> getPendingUsersIds(String bankId) {
+        String query = "Select user_bank.* from `Lab_1`.`_default`.`user_bank` where bank_id = " + bankId + " and IsApproved = false";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        List<Integer> users = new ArrayList<>();
+        result.rowsAsObject().forEach(row -> {
+            try {
+                int id = row.getInt("user_id");
+                users.add(id);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
+
+        users.sort(Comparator.comparing(Integer::intValue));
+        return users;
+    }
+
+    @Override
+    public boolean deleteUser(String userId, String bankId) {
+        try {
+            collection.remove(userId + "_" + bankId);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+
+    }
+
+    @Override
+    public void saveRole(String user_id, String bank_id, String role, boolean IsApproved) {
+        JsonObject json = JsonObject.create()
+                .put("user_id", Integer.parseInt(user_id))
+                .put("bank_id", Integer.parseInt(bank_id))
+                .put("role", role)
+                .put("IsApproved", IsApproved);
+
+        String new_id = user_id + "_" + bank_id;
+        collection.upsert(new_id, json);
+    }
+}
+
+
+//User
+package com.example.lab_1.repositories.Interfaces;
+
+import com.example.lab_1.entities.User;
+import java.util.Optional;
+import java.util.List;
+
+public interface UserRepository {
+    List<User> getUsersWithoutEnterprise(String bankId);
+    int getMaxUserId();
+    int getUsersSalaryProject(String userId);
+    void save(User user);
+    boolean isUserExistByPhone(String phone);
+    boolean isUserExistByPassport(String passport);
+    String getUserPassword(String phone);
+    Optional<User> getUserByPhoneNumber(String phone);
+    Optional<User> findById(String id);
+    List<User> findAll();
+    List<Integer> getUserBanks(String id);
+    void delete(String id);
+    void assignUserToEnterprise(String userId, String enterpriseId, int amount);
+    boolean deleteUserFromSalary(String id);
+}
+
+package com.example.lab_1.repositories;
+
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.query.QueryOptions;
+import com.example.lab_1.entities.User;
+import com.example.lab_1.infrastructure.CouchbaseConnection;
+import com.couchbase.client.java.query.QueryResult;
+import com.example.lab_1.repositories.Interfaces.UserRepository;
+import com.example.lab_1.services.SalaryProjectService;
+import com.example.lab_1.services.UserBankService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
+
+public class CouchbaseUserRepository implements UserRepository {
+    private final Bucket bucket;
+    private final Collection collection;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public CouchbaseUserRepository() {
+        this.bucket = CouchbaseConnection.getBucket();
+        this.collection = bucket.scope("_default").collection("users");
+    }
+
+    @Override
+    public void save(User user) {
+        try {
+            collection.upsert(String.valueOf(user.getId()), user);
+
+            var thisCollection = CouchbaseConnection.getBucket().scope("_default").collection("user_salaryPrj");
+            JsonObject json = JsonObject.create()
+                    .put("userId", user.getId())
+                    .put("salaryProjectId", -1)
+                    .put("amount", 0);
+
+
+            thisCollection.upsert(String.valueOf(user.getId()), json);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Integer> getUserBanks(String id){
+        List<Integer> banks = new ArrayList<>();
+        String query = "SELECT user_bank.* FROM `Lab_1`.`_default`.`user_bank` WHERE user_id = $id";
+
+        QueryResult result = CouchbaseConnection.getCluster().query(query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("id", id)));
+
+        result.rowsAsObject().forEach(row -> {
+            int bank_id = row.getInt("bank_id");
+            banks.add(bank_id);
+        });
+
+        return banks;
+    }
+
+    @Override
+    public String getUserPassword(String phone) {
+        String query = "SELECT users.* FROM `Lab_1`.`_default`.`users` where phone = $phone";
+
+        QueryResult result = CouchbaseConnection.getCluster().query(query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("phone", phone)));
+
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getString("password"))
+                .orElse(null);
+    }
+
+    @Override
+    public boolean isUserExistByPassport(String passport){
+        String query = "SELECT COUNT(*) AS user_count FROM `Lab_1`.`_default`.`users` WHERE passport = $passport";;
+        QueryResult result = CouchbaseConnection.getCluster().query(query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("passport", passport)));
+
+        int user_counter = result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getInt("user_count"))
+                .orElse(0);
+
+        return user_counter != 0;
+    }
+
+    @Override
+    public boolean isUserExistByPhone(String phone) {
+        String query = "SELECT COUNT(*) AS user_count FROM `Lab_1`.`_default`.`users` WHERE phone = $phone";;
+        QueryResult result = CouchbaseConnection.getCluster().query(query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("phone", phone)));
+
+        int user_counter = result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getInt("user_count"))
+                .orElse(0);
+
+        return user_counter != 0;
+    }
+
+    @Override
+    public Optional<User> getUserByPhoneNumber(String phone) {
+        List<User> users = new ArrayList<>();
+        String query = "SELECT users.* FROM `Lab_1`.`_default`.`users` WHERE phone = $phone";;
+        QueryResult result = CouchbaseConnection.getCluster().query(query,
+                QueryOptions.queryOptions().parameters(JsonObject.create().put("phone", phone)));
+
+        result.rowsAsObject().forEach(row -> {
+            try {
+                User user = objectMapper.readValue(row.toString(), User.class);
+                users.add(user);
+                }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
+
+        return users.stream().findFirst();
+    }
+
+    @Override
+    public Optional<User> findById(String id) {
+        List<User> users = new ArrayList<>();
+
+        try {
+            String query = "Select users.* FROM `Lab_1`.`_default`.`users` where id = " + id;
+
+            QueryResult result = CouchbaseConnection.getCluster().query(query,
+                    QueryOptions.queryOptions().parameters(JsonObject.create().put("id", id)));
+
+            result.rowsAsObject().forEach(row -> {
+                try {
+                    User user = objectMapper.readValue(row.toString(), User.class);
+                    users.add(user);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            });
+
+            return users.stream().findFirst();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<User> findAll() {
+        List<User> users = new ArrayList<>();
+        String query = "SELECT users.* FROM `Lab_1`.`_default`.`users`";
+
+        try {
+            QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+            result.rowsAsObject().forEach(row -> {
+                try {
+                    String input = row.toString();
+
+                    User user = objectMapper.readValue(input, User.class);
+                    users.add(user);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return users;
+    }
+
+    @Override
+    public void delete(String id) {
+        try {
+            collection.remove(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public int getUsersSalaryProject(String userId) {
+        String query = "Select user_salaryPrj.* from `Lab_1`.`_default`.`user_salaryPrj` where userId = " + userId;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getInt("salaryProjectId"))
+                .orElse(-1);
+    }
+
+    @Override
+    public void assignUserToEnterprise(String userId, String enterpriseId, int amount) {
+        var thisCollection = CouchbaseConnection.getBucket().scope("_default").collection("user_salaryPrj");
+        int salaryProjectId = SalaryProjectService.getInstance().getSalaryProjectByEnterpriseId(String.valueOf(enterpriseId)).get().getId();
+
+        JsonObject json = JsonObject.create()
+                .put("salaryProjectId", salaryProjectId)
+                .put("userId", Integer.parseInt(userId))
+                .put("amount", amount);
+
+
+        thisCollection.replace(userId, json);
+    }
+
+    @Override
+    public boolean deleteUserFromSalary(String id) {
+        var thisCollection = CouchbaseConnection.getBucket().scope("_default").collection("user_salaryPrj");
+
+        JsonObject json = JsonObject.create()
+                .put("userId", Integer.parseInt(id))
+                .put("amount", 0)
+                .put("salaryProjectId", -1);
+
+
+        try {
+            thisCollection.replace(id, json);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<User> getUsersWithoutEnterprise(String bankId) {
+        List<User> users = new ArrayList<>();
+
+        String query = "Select user_salaryPrj.* from `Lab_1`.`_default`.`user_salaryPrj` where salaryProjectId = " + -1;
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        result.rowsAsObject().forEach(row -> {
+            try{
+                int userId = row.getInt("userId");
+                var role = UserBankService.getInstance().getUserRoleByID(String.valueOf(userId), bankId);
+                if("client".equals(role)){
+                    User user = findById(String.valueOf(userId)).get();
+                    users.add(user);
+                }
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        });
+
+        return users;
+    }
+
+    @Override
+    public int getMaxUserId() {
+        String query = "SELECT MAX(u.id) AS maxId FROM `Lab_1`.`_default`.`users` u";
+        QueryResult result = CouchbaseConnection.getCluster().query(query);
+
+        return result.rowsAsObject()
+                .stream()
+                .findFirst()
+                .map(row -> row.getInt("maxId"))
+                .orElse(0);
+    }
+}
+
+
+
+
+
+######Service layer
+
+//Account 
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.Account;
+import com.example.lab_1.repositories.CouchbaseAccountRepository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class AccountService {
+    private static AccountService instance;
+    private final CouchbaseAccountRepository accountRepository;
+
+    private AccountService() {
+        this.accountRepository = new CouchbaseAccountRepository();
+
+        Account.setIdGenerator(accountRepository.getMaxAccountId());
+    }
+
+    public static synchronized AccountService getInstance() {
+        if (instance == null) {
+            instance = new AccountService();
+        }
+        return instance;
+    }
+
+    public void updateAccount(int sourceAccount, int destinationAccount, int amount) {
+        accountRepository.update(sourceAccount, destinationAccount, amount);
+    }
+
+    public void updateAccount(int sourceAccount, int amount) {
+        accountRepository.update(sourceAccount, amount);
+    }
+
+    public void updateSalaryAccount(int destinationAccount, int amount) {
+        accountRepository.updateSalary(destinationAccount, amount);
+    }
+
+
+    public void saveAccount(Account account) {
+        accountRepository.save(account);
+    }
+
+    public boolean deleteAccount(String id) {
+        return accountRepository.delete(id);
+    }
+
+    public Optional<Account> getAccountById(String id) {
+        return accountRepository.findById(id);
+    }
+
+    public List<Account> getAllAccounts() {
+        return accountRepository.findAll();
+    }
+
+    public List<Account> getAccountsByUserId(String userId) {
+        return accountRepository.findByUserId(userId);
+    }
+
+    public List<Account> getAccountsByBankId(String bankId) {
+        return accountRepository.findByBankId(bankId);
+    }
+
+    public int getAccountByBankIdAndUserId(String bankId, String userId) {
+        return accountRepository.getAccountsByBankIdAndUserId(bankId, userId);
+    }
+}
+
+//Bank
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.Bank;
+import com.example.lab_1.repositories.CouchbaseBankRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public class BankService {
+    private static BankService instance;
+    private final CouchbaseBankRepository bankRepository;
+
+    private BankService() {
+        this.bankRepository = new CouchbaseBankRepository();
+    }
+
+    public static synchronized BankService getInstance() {
+        if (instance == null) {
+            instance = new BankService();
+        }
+        return instance;
+    }
+
+    public void saveBank(Bank bank) {
+        bankRepository.save(bank);
+    }
+
+    public List<Bank> getAllBanks() {
+        return bankRepository.findAll();
+    }
+
+    public Optional<Bank> getBankById(String id) {
+        return bankRepository.findById(id);
+    }
+
+    public void deleteBank(String id) {
+        bankRepository.delete(id);
+    }
+}
+
+//Credit
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.Credit;
+import com.example.lab_1.entities.LogEntry;
+import com.example.lab_1.repositories.CouchbaseCreditRepository;
+import com.example.lab_1.repositories.Interfaces.CreditRepository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+public class CreditService {
+    private static CreditService instance;
+    private final CreditRepository creditRepository;
+
+    private CreditService() {
+        this.creditRepository = new CouchbaseCreditRepository();
+
+        Credit.setIdGenerator(getMaxCreditId());
+    }
+
+    public static synchronized CreditService getInstance() {
+        if (instance == null) {
+            instance = new CreditService();
+        }
+        return instance;
+    }
+
+    public boolean deleteCredit(String id) {
+        return creditRepository.delete(id);
+    }
+
+    public void saveCredit(Credit credit) {
+        creditRepository.save(credit);
+    }
+
+    public Optional<Credit> getCreditById(String id) {
+        return creditRepository.findById(id);
+    }
+
+    public List<Credit> getAllCredits() {
+        return creditRepository.findAll();
+    }
+
+    public List<Credit> getCreditsByUserId(String userId) {
+        return creditRepository.findByUserId(userId);
+    }
+
+    public List<Credit> getPendingCredits(String bankId) {
+        return creditRepository.findByBankId(bankId)
+                .stream()
+                .filter(credit -> !credit.isApproved())
+                .collect(Collectors.toList());
+    }
+
+    public void approveCredit(String id) {
+        creditRepository.approveCredit(id);
+
+        LogService.logAction(new LogEntry(
+                "credit_approval",
+                id,
+                "Кредит " + id + " был одобрен"
+        ));
+    }
+    public void rejectCredit(String id) {
+        creditRepository.delete(id);
+    }
+
+    private int getMaxCreditId(){
+        return creditRepository.getMaxCreditId();
+    }
+}
+
+
+//enterprise
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.Enterprise;
+import com.example.lab_1.repositories.CouchbaseEnterpriseRepository;
+import com.example.lab_1.repositories.Interfaces.EnterpriseRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public class EnterpriseService {
+    private static EnterpriseService instance;
+    private final EnterpriseRepository enterpriseRepository;
+
+    private EnterpriseService() {
+        this.enterpriseRepository = new CouchbaseEnterpriseRepository();
+    }
+
+    public static synchronized EnterpriseService getInstance() {
+        if (instance == null) {
+            instance = new EnterpriseService();
+        }
+        return instance;
+    }
+
+    public Optional<Enterprise> getEnterpriseByName(String name) {
+        return enterpriseRepository.getEnterpriseByName(name);
+    }
+
+    public void saveEnterprise(Enterprise enterprise) {
+        enterpriseRepository.save(enterprise);
+    }
+
+    public Optional<Enterprise> getEnterpriseById(String id) {
+        return enterpriseRepository.findById(id);
+    }
+
+    public List<Enterprise> getAllEnterprises() {
+        return enterpriseRepository.findAll();
+    }
+
+    public List<Enterprise> getEnterprisesByBankId(String bankId) {
+        return enterpriseRepository.findByBankId(bankId);
+    }
+
+    public List<Enterprise> getUnverifiedEnterprises() {
+        return enterpriseRepository.findUnverifiedEnterprises();
+    }
+
+    public void deleteEnterprise(String id) {
+        enterpriseRepository.delete(id);
+    }
+
+    public void verifyEnterprise(String id) {
+        Optional<Enterprise> enterpriseOpt = enterpriseRepository.findById(id);
+        enterpriseOpt.ifPresent(enterprise -> {
+            Enterprise verifiedEnterprise = new Enterprise.Builder()
+                    .name(enterprise.getName())
+                    .unp(enterprise.getUnp())
+                    .address(enterprise.getAddress())
+                    .email(enterprise.getEmail())
+                    .bankId(enterprise.getBankId())
+                    .salaryProjectId(enterprise.getsalaryProjectId())
+                    .isVerified(true) // Подтверждаем предприятие
+                    .build();
+            enterpriseRepository.save(verifiedEnterprise);
+        });
+    }
+}
+
+
+//Log
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.LogEntry;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+public class LogService {
+    private static final String LOG_FILE = "logs/app.log";
+    private static final String KEY_FILE = "logs/key.secret";
+    private static SecretKey secretKey;
+
+    // Инициализация ключа
+    static {
+        try {
+            Path path = Paths.get(KEY_FILE);
+            if (Files.exists(path)) {
+                byte[] keyBytes = Files.readAllBytes(path);
+                secretKey = new SecretKeySpec(keyBytes, "AES");
+            } else {
+                KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+                keyGen.init(128);
+                secretKey = keyGen.generateKey();
+                Files.createDirectories(Paths.get("logs"));
+                Files.write(path, secretKey.getEncoded());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void logAction(LogEntry log) {
+        try {
+            if (!Files.exists(Paths.get(LOG_FILE))) {
+                Files.createDirectories(Paths.get("logs"));
+                Files.createFile(Paths.get(LOG_FILE));
+            }
+
+            try (FileWriter writer = new FileWriter(LOG_FILE, true)) {
+                writer.write(encrypt(log.toJson()) + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<LogEntry> getAllRawLogs() {
+        try {
+            if (!Files.exists(Paths.get(LOG_FILE))) {
+                return List.of();
+            }
+
+            return Files.lines(Paths.get(LOG_FILE))
+                    .map(LogService::decrypt)
+                    .map(LogEntry::fromJson)
+                    .collect(Collectors.toList());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+
+    public static List<LogEntry> getLogs() {
+        return getAllRawLogs().stream()
+                .filter(Objects::nonNull)
+                .filter(log -> !log.reversed())
+                .collect(Collectors.toList());
+    }
+
+
+    public static String encrypt(String data) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] encrypted = cipher.doFinal(data.getBytes());
+            return Base64.getEncoder().encodeToString(encrypted);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static String decrypt(String encryptedData) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            byte[] decoded = Base64.getDecoder().decode(encryptedData);
+            return new String(cipher.doFinal(decoded));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void updateLogFile(LogEntry updatedLog) {
+        List<LogEntry> logs = getAllRawLogs().stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < logs.size(); i++) {
+            if (logs.get(i).getTimestamp().equals(updatedLog.getTimestamp())) {
+                logs.set(i, updatedLog);
+                break;
+            }
+        }
+
+        try (FileWriter writer = new FileWriter(LOG_FILE, false)) {
+            for (LogEntry log : logs) {
+                writer.write(encrypt(log.toJson()) + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+
+
+//RollBack(Сервис для отката действий)
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.LogEntry;
+import com.example.lab_1.services.*;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import static com.example.lab_1.services.LogService.updateLogFile;
+
+public class RollBackService {
+    private static RollBackService instance;
+
+    private RollBackService() {}
+
+    public static synchronized RollBackService getInstance() {
+        if (instance == null) {
+            instance = new RollBackService();
+        }
+        return instance;
+    }
+
+    public boolean rollbackLastAction() {
+        List<LogEntry> logs = LogService.getLogs();
+        if (logs.isEmpty()) {
+            System.out.println("Нет логов для отката.");
+            return false;
+        }
+
+        LogEntry lastLog = logs.get(logs.size() - 1); // Берем последний лог
+        return rollbackAction(lastLog);
+    }
+
+    public boolean rollbackAction(LogEntry log) {
+        boolean success = false;
+
+        String[] ids = log.getTargetIds().split(",");
+        switch (log.getActionType()) {
+            case "user_registration":
+                success = rollbackUserRegistration(ids);
+                break;
+            case "credit_approval":
+                success = rollbackCreditApproval(ids);
+                break;
+            case "salary_project_creation":
+                success = rollbackSalaryProject(ids);
+                break;
+            default:
+                System.out.println("Неизвестное действие: " + log.getActionType());
+                return false;
+        }
+
+        if (success) {
+            markLogAsReversed(log);
+        }
+        return success;
+    }
+
+    private void markLogAsReversed(LogEntry log) {
+        log.markReversed();
+        updateLogFile(log);
+    }
+
+    private boolean rollbackUserRegistration(String[] ids) {
+        if (ids.length < 2) return false;
+
+        String userId = ids[0];
+        String bankId = ids[1];
+
+        System.out.println("Откат регистрации пользователя " + userId + " в банке " + bankId);
+        return UserBankService.getInstance().deleteUser(userId, bankId);
+    }
+
+    private boolean rollbackCreditApproval(String[] ids) {
+        if (ids.length < 1) return false;
+
+        String creditId = ids[0];
+
+        System.out.println("Откат кредита с ID: " + creditId);
+        return CreditService.getInstance().deleteCredit(creditId);
+    }
+
+    private boolean rollbackSalaryProject(String[] ids) {
+        if (ids.length < 1) return false;
+
+        String projectId = ids[0];
+
+        System.out.println("Откат зарплатного проекта с ID: " + projectId);
+        return SalaryProjectService.getInstance().deleteSalaryProject(projectId);
+    }
+}
+
+
+//Salary Project
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.LogEntry;
+import com.example.lab_1.entities.SalaryProject;
+import com.example.lab_1.entities.User;
+import com.example.lab_1.repositories.CouchbaseSalaryProjectRepository;
+import com.example.lab_1.repositories.Interfaces.SalaryProjectRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public class SalaryProjectService {
+    private static SalaryProjectService instance;
+    private final SalaryProjectRepository salaryProjectRepository;
+
+    private SalaryProjectService() {
+        this.salaryProjectRepository = new CouchbaseSalaryProjectRepository();
+
+        SalaryProject.setIdGenerator(salaryProjectRepository.getMaxSalaryProjectId());
+    }
+
+    public static synchronized SalaryProjectService getInstance() {
+        if (instance == null) {
+            instance = new SalaryProjectService();
+        }
+        return instance;
+    }
+
+    public List<Integer> getUsersOfSalaryProject(String salaryProjectId) {
+        return salaryProjectRepository.getUsersOfSalaryProject(salaryProjectId);
+    }
+
+    public void saveSalaryProject(SalaryProject salaryProject) {
+        salaryProjectRepository.save(salaryProject);
+    }
+
+    public Optional<SalaryProject> getSalaryProjectByEnterpriseId(String enterpriseId) {
+        return salaryProjectRepository.findByEnterpriseId(enterpriseId);
+    }
+
+    public Optional<SalaryProject> getSalaryProjectById(String id) {
+        return salaryProjectRepository.findById(id);
+    }
+
+    public List<SalaryProject> getAllSalaryProjects() {
+        return salaryProjectRepository.findAll();
+    }
+
+    public List<SalaryProject> getSalaryProjectsByUserId(String userId) {
+        return salaryProjectRepository.findByUserId(userId);
+    }
+
+    public List<SalaryProject> getSalaryProjectsByBankId(String bankId) {
+        return salaryProjectRepository.findByBankId(bankId);
+    }
+
+    public List<SalaryProject> getPendingApprovals(String bankId) {
+        return salaryProjectRepository.findPendingApprovals(bankId);
+    }
+
+    public boolean deleteSalaryProject(String id) {
+        List<Integer> list = getUsersOfSalaryProject(id);
+
+        boolean result = true;
+        for (Integer userId : list) {
+            if(!UserService.getInstance().deleteUserFromSalary(String.valueOf(userId))){
+                result = false;
+            }
+        }
+
+        if(!result){
+            return false;
+        }
+
+        return salaryProjectRepository.delete(id);
+    }
+
+    public void approveSalaryProject(String id) {
+        Optional<SalaryProject> salaryProjectOpt = salaryProjectRepository.findById(id);
+        salaryProjectOpt.ifPresent(salaryProject -> {
+            salaryProject.setApproved(true);
+            salaryProjectRepository.replace(salaryProject);
+        });
+
+        LogService.logAction(new LogEntry(
+                "salary_project_creation",
+                id,
+                "Зарплатный проект " + id + " был одобрен"
+        ));
+    }
+}
+
+
+//Transfer
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.Transfer;
+import com.example.lab_1.repositories.CouchbaseTransferRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public class TransferService {
+    private static TransferService instance;
+    private final CouchbaseTransferRepository transferRepository;
+
+    private TransferService() {
+        this.transferRepository = new CouchbaseTransferRepository();
+
+        Transfer.setIdGenerator(getMaxTransferId());
+    }
+
+    public static synchronized TransferService getInstance() {
+        if (instance == null) {
+            instance = new TransferService();
+        }
+        return instance;
+    }
+
+    public List<Transfer> getTransfersByBank(String bankId) {
+        return transferRepository.findByBank(bankId);
+    }
+
+    public List<Transfer> getTransfersByBankAndEnterprise(String bankId) {
+        return transferRepository.findByBankAndEnterprise(bankId);
+    }
+
+    public void createTransfer(int sourceAccount, int destinationAccount, int amount) {
+        AccountService.getInstance().updateAccount(sourceAccount, destinationAccount, amount);
+
+        TransferService.getInstance().saveTransfer(new Transfer.Builder()
+                .amount(amount)
+                .destinationAccount(destinationAccount)
+                .sourceAccount(sourceAccount)
+                .build());
+    }
+
+    public void createTransfer(int sourceAccount, int amount) {
+        AccountService.getInstance().updateAccount(sourceAccount, amount);
+
+        TransferService.getInstance().saveTransfer(new Transfer.Builder()
+                .amount(amount)
+                .destinationAccount(-1)
+                .sourceAccount(sourceAccount)
+                .build());
+    }
+    public void createSalaryTransfer(int destinationAccount, int amount, int sourceEnterprise) {
+        AccountService.getInstance().updateSalaryAccount(destinationAccount, amount);
+
+        TransferService.getInstance().saveTransfer(new Transfer.Builder()
+                .amount(amount)
+                .destinationAccount(destinationAccount)
+                .sourceAccount(-sourceEnterprise)
+                .build());
+    }
+
+    public void saveTransfer(Transfer transfer) {
+        transferRepository.save(transfer);
+    }
+
+    public Optional<Transfer> getTransferById(String id) {
+        return transferRepository.findById(id);
+    }
+
+    public List<Transfer> getAllTransfers() {
+        return transferRepository.findAll();
+    }
+
+    public int getMaxTransferId(){ return transferRepository.getMaxTransferId();}
+
+    public List<Transfer> findByDestinationAccount(String destinationAccount) {
+        return transferRepository.findByDestinationAccount(destinationAccount);
+    }
+    public List<Transfer> findBySourceAccount(String sourceAccount) {
+        return transferRepository.findBySourceAccount(sourceAccount);
+    }
+}
+
+
+//UserBankEnterprise
+package com.example.lab_1.services;
+
+import com.example.lab_1.repositories.CouchBaseUserBankEnterpriseRepository;
+import com.example.lab_1.repositories.CouchbaseUserBankRepository;
+import com.example.lab_1.repositories.Interfaces.UserBankEnterpriseRepository;
+
+public class UserBankEnterpriseService {
+    private static UserBankEnterpriseService instance;
+    private final CouchBaseUserBankEnterpriseRepository userBankEnterpriseRepository;
+
+    private UserBankEnterpriseService() {
+        this.userBankEnterpriseRepository = new CouchBaseUserBankEnterpriseRepository();
+    }
+
+    public static synchronized UserBankEnterpriseService getInstance() {
+        if (instance == null) {
+            instance = new UserBankEnterpriseService();
+        }
+        return instance;
+    }
+
+    public int getEnterpriseByUserAndBankID(String userId, String bankId) {
+        return userBankEnterpriseRepository.getEnterpriseByUserAndBankId(userId, bankId);
+    }
+
+    public void saveInfo(String userId, String bankId, String enterpriseId) {
+        userBankEnterpriseRepository.saveInfo(userId, bankId, enterpriseId);
+    }
+}
+
+
+//Userbank
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.Account;
+import com.example.lab_1.entities.Credit;
+import com.example.lab_1.entities.LogEntry;
+import com.example.lab_1.entities.User;
+import com.example.lab_1.repositories.CouchbaseUserBankRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class UserBankService {
+    private static UserBankService instance;
+    private final CouchbaseUserBankRepository userBankRepository;
+
+    private UserBankService() {
+        this.userBankRepository = new CouchbaseUserBankRepository();
+    }
+
+    public static synchronized UserBankService getInstance() {
+        if (instance == null) {
+            instance = new UserBankService();
+        }
+        return instance;
+    }
+
+    public String getUserRoleByID(String userId, String bankId) {
+        return userBankRepository.getUserRoleByID(userId, bankId);
+    }
+
+    public void saveRole(String userId, String bankId, String role, boolean IsApproved) {
+        userBankRepository.saveRole(userId, bankId, role, IsApproved);
+    }
+
+    public boolean isApproved(String userId, String bankId) {
+        return userBankRepository.IsApproved(userId, bankId);
+    }
+
+    public List<User> getPendingUsers(String bankId) {
+        List<Integer> userIds = userBankRepository.getPendingUsersIds(bankId);
+        List<User> users = new ArrayList<>();
+
+        for (Integer userId : userIds) {
+            users.add(UserService.getInstance().getUserById(String.valueOf(userId)).get());
+        }
+
+        return users;
+    }
+
+    public void approveUser(String userId, String bankId) {
+        userBankRepository.approveUser(userId, bankId);
+
+        LogService.logAction(new LogEntry(
+                "user_registration",
+                userId + "," + bankId,
+                "Пользователь " + userId + " зарегистрирован в банке: " + bankId
+        ));
+    }
+
+    public void rejectUser(String userId, String bankId) {
+        userBankRepository.rejectUser(userId, bankId);
+    }
+
+    /*
+        + accounts
+        + credits
+        salaryProject
+        user_Bank
+     */
+    public boolean deleteUser(String userId, String bankId) {
+        AtomicBoolean deletedSuccessfully = new AtomicBoolean(true);
+
+        List<Account> userAccounts = AccountService.getInstance().getAccountsByUserId(userId);
+        userAccounts.forEach(account -> {
+            if(!AccountService.getInstance().deleteAccount(String.valueOf(account.getAccountId()))){
+                deletedSuccessfully.set(false);
+            }
+        });
+
+        List<Credit> userCredits = CreditService.getInstance().getCreditsByUserId(userId);
+
+        userCredits.forEach(credit -> {
+            if(!CreditService.getInstance().deleteCredit(String.valueOf(credit.getId()))){
+                deletedSuccessfully.set(false);
+            }
+        });
+
+        if(!deletedSuccessfully.get()){
+            return false;
+        }
+        if(!UserService.getInstance().deleteUserFromSalary(userId)){
+            return false;
+        }
+
+        return userBankRepository.deleteUser(userId, bankId);
+    }
+}
+
+
+
+//User
+
+package com.example.lab_1.services;
+
+import com.example.lab_1.entities.User;
+import com.example.lab_1.repositories.CouchbaseUserRepository;
+import com.example.lab_1.repositories.Interfaces.UserRepository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class UserService {
+    private static UserService instance;
+    private final UserRepository userRepository;
+
+    private UserService() {
+        this.userRepository = new CouchbaseUserRepository();
+
+        User.setIdGenerator(userRepository.getMaxUserId());
+    }
+
+    public static synchronized UserService getInstance() {
+        if (instance == null) {
+            instance = new UserService();
+        }
+        return instance;
+    }
+
+    //Methods
+    //=======================================
+    public List<User> getUsersWithoutEnterprise(String bankId) {
+        return userRepository.getUsersWithoutEnterprise(bankId);
+    }
+
+    public void assignUserToEnterprise(String userId, String enterpriseId, int amount) {
+        userRepository.assignUserToEnterprise(userId, enterpriseId, amount);
+    }
+
+    public int getUsersSalaryProject(String userId) {
+        return userRepository.getUsersSalaryProject(userId);
+    }
+
+    public boolean isUserExistByPhone(String phone) {
+        return userRepository.isUserExistByPhone(phone);
+    }
+
+    public boolean isUserExistByPassport(String passport) {
+        return userRepository.isUserExistByPassport(passport);
+    }
+
+    public Optional<User> getUserByPhoneNumber(String Phone) {
+        return userRepository.getUserByPhoneNumber(Phone);
+    }
+
+    public String getUserPassword(String phone) {
+        return userRepository.getUserPassword(phone);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public Optional<User> getUserById(String id) {
+        return userRepository.findById(id);
+    }
+
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+    public List<Integer> getUserBanks(String id) {
+        return userRepository.getUserBanks(id);
+    }
+
+    public boolean deleteUserFromSalary(String id) {
+        return userRepository.deleteUserFromSalary(id);
+    }
+}
+
+
+
+#### Additional layer
+
+//Connection 
+
+package com.example.lab_1.infrastructure;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Cluster;
+
+import java.time.Duration;
+
+public class CouchbaseConnection {
+    private  static Cluster cluster;
+    private  static Bucket bucket;
+
+    public static void initialize() {
+        cluster = Cluster.connect("127.0.0.1", "Administrator", "123456");
+
+        bucket = cluster.bucket("Lab_1");
+
+        bucket.waitUntilReady(Duration.ofSeconds(10));
+    }
+
+    public static Cluster getCluster() {
+        return cluster;
+    }
+    public static Bucket getBucket() {
+        return bucket;
+    }
+
+    public static void disconnect() {
+        if(cluster != null) {
+            cluster.disconnect();
+        }
+    }
+
+}
+

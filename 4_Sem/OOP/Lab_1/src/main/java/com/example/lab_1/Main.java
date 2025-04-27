@@ -1,11 +1,5 @@
 package com.example.lab_1;
 
-/*
-    Approve of client
-    Approve of credit +
-    Approve of Salary project +
- */
-
 //MyCluster
 //Administrator
 //123456

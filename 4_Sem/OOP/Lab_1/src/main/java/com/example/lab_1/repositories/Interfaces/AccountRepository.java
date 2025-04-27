@@ -7,6 +7,7 @@ import java.util.Optional;
 public interface AccountRepository {
     int getAccountsByBankIdAndUserId(String bankId, String userId);
     void save(Account account);
+    void replace(Account account);
     boolean delete(String id);
     void update(int sourceAccount, int destinationAccount, int amount);
     void update(int sourceAccount, int amount);
@@ -15,5 +16,5 @@ public interface AccountRepository {
     List<Account> findAll();
     int getMaxAccountId();
     List<Account> findByUserId(String userId);
-    List<Account> findByBankId(String bankId);
+    List<Account> findByBankId(String userId, String bankId);
 }

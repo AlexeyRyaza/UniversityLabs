@@ -224,7 +224,6 @@ public class CouchbaseUserRepository implements UserRepository {
                 .put("amount", 0)
                 .put("salaryProjectId", -1);
 
-
         try {
             thisCollection.replace(id, json);
             return true;
