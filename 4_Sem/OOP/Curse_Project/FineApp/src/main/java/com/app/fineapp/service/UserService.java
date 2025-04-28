@@ -56,8 +56,13 @@ public class UserService {
 
     @Async
     @Transactional
-    public CompletableFuture<List<AccountDTO>> getAllAccountsByUserId(UserDTO userDTO) {
-        List<Account> accounts = accountService.findAllAccountsByIds(userDTO.getAccountIds());
+    public CompletableFuture<List<AccountDTO>> getAllAccountsByUserId(int id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
+
+        List<Account> accounts = accountService.findAllAccountsByIds(user.getAccounts()
+                .stream()
+                .map(Account::getId)
+                .collect(Collectors.toList()));
         List<AccountDTO> accountDTOS = accounts.stream()
                 .map(AccountMapper::toDTO)
                 .toList();
@@ -67,8 +72,13 @@ public class UserService {
 
     @Async
     @Transactional
-    public CompletableFuture<List<CategoryDTO>> getAllCategoriesByUserId(UserDTO userDTO) {
-        List<Category> categories = categoryService.findAllCategoryByIds(userDTO.getCategoryIds());
+    public CompletableFuture<List<CategoryDTO>> getAllCategoriesByUserId(int id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
+
+        List<Category> categories = categoryService.findAllCategoryByIds(user.getCategories()
+                .stream()
+                .map(Category::getId)
+                .collect(Collectors.toList()));
         List<CategoryDTO> categoryDTOS = categories.stream()
                 .map(CategoryMapper::toDTO)
                 .toList();

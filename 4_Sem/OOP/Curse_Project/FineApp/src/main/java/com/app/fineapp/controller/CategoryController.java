@@ -29,7 +29,7 @@ public final class CategoryController {
 
     @PostMapping("/categories")
     public CompletableFuture<CategoryDTO> createCategory(@RequestBody CategoryDTO category) {
-        return categoryService.addCategory(category);
+        return categoryService.createCategory(category);
     }
 
     @PutMapping("/categories")

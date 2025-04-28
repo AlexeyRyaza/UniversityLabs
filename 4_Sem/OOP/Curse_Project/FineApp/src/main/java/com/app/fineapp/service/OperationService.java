@@ -71,16 +71,16 @@ public class OperationService {
     @Async
     @Transactional
     public CompletableFuture<OperationDTO> updateOperation(OperationDTO operationDTO) {
-        Account account = accountService.findEntityById((operationDTO.getAccountId()));
-        Category category = categoryService.findEntityById((operationDTO.getCategoryId()));
+        Operation existingOperation = operationRepository.findById(operationDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Operation not found: " + operationDTO.getId()));
 
-        Operation operation = OperationMapper.toEntity(operationDTO, account, category);
+        existingOperation.setAmount(operationDTO.getAmount());
+        existingOperation.setComment(operationDTO.getComment());
+        existingOperation.setDate(operationDTO.getDate());
+        existingOperation.setAccount(accountService.findEntityById(operationDTO.getAccountId()));
+        existingOperation.setCategory(categoryService.findEntityById(operationDTO.getCategoryId()));
 
-        if(!operationRepository.existsById(operationDTO.getId())) {
-            throw new EntityNotFoundException("Operation not found: " + operationDTO.getId());
-        }
-        var saved = operationRepository.save(operation);
-
+        var saved = operationRepository.save(existingOperation);
         return CompletableFuture.completedFuture(OperationMapper.toDTO(saved));
     }
 
@@ -91,7 +91,7 @@ public class OperationService {
             throw new EntityNotFoundException("Operation not found: " + id);
         }
 
-        operationRepository.findById(id).ifPresent(operation -> operation.setArchived(true));
+        operationRepository.deleteById(id);
         return CompletableFuture.completedFuture(null);
     }
 

@@ -27,14 +27,14 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping("users/accounts")
-    public CompletableFuture<List<AccountDTO>> getAllAccountsByUserId(@RequestBody UserDTO userDTO) {
-        return userService.getAllAccountsByUserId(userDTO);
+    @GetMapping("users/{id}/accounts")
+    public CompletableFuture<List<AccountDTO>> getAllAccountsByUserId(@PathVariable int id) {
+        return userService.getAllAccountsByUserId(id);
     }
 
-    @GetMapping("users/categories")
-    public CompletableFuture<List<CategoryDTO>> getAllCategoriesByUserId(@RequestBody UserDTO userDTO) {
-        return userService.getAllCategoriesByUserId(userDTO);
+    @GetMapping("users/{id}/categories")
+    public CompletableFuture<List<CategoryDTO>> getAllCategoriesByUserId(@PathVariable int id) {
+        return userService.getAllCategoriesByUserId(id);
     }
 
     @PostMapping("/users")

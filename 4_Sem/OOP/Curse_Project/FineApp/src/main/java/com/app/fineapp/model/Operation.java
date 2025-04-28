@@ -100,7 +100,6 @@ public class Operation extends Icon {
                 ", date=" + date +
                 ", image=" + image +
                 ", color=" + color +
-                ", version=" + version +
                 '}';
     }
 }

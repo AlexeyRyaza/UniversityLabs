@@ -45,7 +45,7 @@ public class CategoryService {
 
     @Async
     @Transactional
-    public CompletableFuture<CategoryDTO> addCategory(CategoryDTO category) {
+    public CompletableFuture<CategoryDTO> createCategory(CategoryDTO category) {
         Category cat = CategoryMapper.toEntity(category);
 
         var saved = categoryRepository.save(cat);
