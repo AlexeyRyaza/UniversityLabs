@@ -29,4 +29,4 @@ public class FineAppApplication {
 
 
 // Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-// npm start 
+// npm start
