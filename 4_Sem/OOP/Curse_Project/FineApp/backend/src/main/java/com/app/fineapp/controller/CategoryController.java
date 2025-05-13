@@ -1,5 +1,6 @@
 package com.app.fineapp.controller;
 
+import ch.qos.logback.core.testUtil.XTeeOutputStream;
 import com.app.fineapp.dto.CategoryDTO;
 import com.app.fineapp.model.Category;
 import com.app.fineapp.service.CategoryService;
@@ -18,7 +19,7 @@ public final class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/categories")
+    @GetMapping("http://localhost:8080/api/categories")
     public CompletableFuture<List<CategoryDTO>> getOperations() {
         return categoryService.getAllCategories();
     }
@@ -40,5 +41,10 @@ public final class CategoryController {
     @DeleteMapping("/categories/{id}")
     public CompletableFuture<Void> deleteCategory(@PathVariable int id) {
         return categoryService.deleteCategory(id);
+    }
+
+    @GetMapping("api/test")
+    public String test() {
+        return "test";
     }
 }

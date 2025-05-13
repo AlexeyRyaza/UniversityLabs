@@ -20,7 +20,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String,String> handleAny(Exception ex) {
-        // логируем ex
         return Map.of("error", "Internal server error");
     }
 }

@@ -28,4 +28,5 @@ public class FineAppApplication {
 }
 
 
-// TODO Add Version to User
+// Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+// npm start 
