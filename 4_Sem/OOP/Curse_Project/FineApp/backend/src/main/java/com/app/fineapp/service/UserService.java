@@ -1,34 +1,35 @@
 package com.app.fineapp.service;
 
+import com.app.fineapp.dto.UserDTO;
 import com.app.fineapp.dto.AccountDTO;
 import com.app.fineapp.dto.CategoryDTO;
-import com.app.fineapp.dto.UserDTO;
+import com.app.fineapp.mapper.UserMapper;
 import com.app.fineapp.mapper.AccountMapper;
 import com.app.fineapp.mapper.CategoryMapper;
-import com.app.fineapp.mapper.UserMapper;
+import com.app.fineapp.model.User;
 import com.app.fineapp.model.Account;
 import com.app.fineapp.model.Category;
-import com.app.fineapp.model.User;
 import com.app.fineapp.repository.UserRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final AccountService accountService;
+    private final CategoryService categoryService;
 
-    AccountService accountService;
-    CategoryService categoryService;
-
-    @Autowired
-    UserService(UserRepository userRepository, AccountService accountService, CategoryService categoryService) {
+    public UserService(UserRepository userRepository,
+                       AccountService accountService,
+                       CategoryService categoryService) {
         this.userRepository = userRepository;
         this.accountService = accountService;
         this.categoryService = categoryService;
@@ -37,92 +38,108 @@ public class UserService {
     @Async
     @Transactional(readOnly = true)
     public CompletableFuture<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userRepository.findAll()
-                .stream()
+        List<UserDTO> result = userRepository.findAll().stream()
                 .map(UserMapper::toDTO)
                 .collect(Collectors.toList());
+        if (result.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
 
-        return CompletableFuture.completedFuture(users);
+        return CompletableFuture.completedFuture(result);
     }
 
     @Async
     @Transactional(readOnly = true)
     public CompletableFuture<UserDTO> getUserById(int id) {
-        User user = userRepository.findById(id).
-                orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
-
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
         return CompletableFuture.completedFuture(UserMapper.toDTO(user));
     }
 
     @Async
-    @Transactional
+    @Transactional(readOnly = true)
     public CompletableFuture<List<AccountDTO>> getAllAccountsByUserId(int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
 
-        List<Account> accounts = accountService.findAllAccountsByIds(user.getAccounts()
-                .stream()
-                .map(Account::getId)
-                .collect(Collectors.toList()));
-        List<AccountDTO> accountDTOS = accounts.stream()
+        List<Account> accounts = accountService.findAllAccountsByIds(
+                user.getAccounts().stream()
+                        .map(Account::getId)
+                        .collect(Collectors.toList())
+        );
+        List<AccountDTO> result = accounts.stream()
                 .map(AccountMapper::toDTO)
-                .toList();
-
-        return CompletableFuture.completedFuture(accountDTOS);
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(result);
     }
 
     @Async
-    @Transactional
+    @Transactional(readOnly = true)
     public CompletableFuture<List<CategoryDTO>> getAllCategoriesByUserId(int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
 
-        List<Category> categories = categoryService.findAllCategoryByIds(user.getCategories()
-                .stream()
-                .map(Category::getId)
-                .collect(Collectors.toList()));
-        List<CategoryDTO> categoryDTOS = categories.stream()
+        List<Category> categories = categoryService.findAllCategoryByIds(
+                user.getCategories().stream()
+                        .map(Category::getId)
+                        .collect(Collectors.toList())
+        );
+
+        List<CategoryDTO> result = categories.stream()
                 .map(CategoryMapper::toDTO)
-                .toList();
-
-        return CompletableFuture.completedFuture(categoryDTOS);
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(result);
     }
 
     @Async
     @Transactional
     public CompletableFuture<UserDTO> createUser(UserDTO userDTO) {
+        if(userRepository.existsById(userDTO.getId())){
+            throw new EntityExistsException("User already exists: " + userDTO.getId());
+        }
         List<Account> accounts = accountService.findAllAccountsByIds(userDTO.getAccountIds());
         List<Category> categories = categoryService.findAllCategoryByIds(userDTO.getCategoryIds());
 
         User user = UserMapper.toEntity(userDTO, accounts, categories);
         userRepository.save(user);
-
         return CompletableFuture.completedFuture(UserMapper.toDTO(user));
     }
 
     @Async
     @Transactional
     public CompletableFuture<UserDTO> updateUser(UserDTO userDTO) {
+        if (!userRepository.existsById(userDTO.getId())) {
+            throw new EntityNotFoundException("User not found: " + userDTO.getId());
+        }
         List<Account> accounts = accountService.findAllAccountsByIds(userDTO.getAccountIds());
         List<Category> categories = categoryService.findAllCategoryByIds(userDTO.getCategoryIds());
 
         User user = UserMapper.toEntity(userDTO, accounts, categories);
-
-        if(!userRepository.existsById(user.getId())) {
-            throw new EntityNotFoundException("User not found: " + user.getId());
-        }
-        var saved = userRepository.save(user);
+        User saved = userRepository.save(user);
         return CompletableFuture.completedFuture(UserMapper.toDTO(saved));
     }
 
     @Async
     @Transactional
-    public CompletableFuture<Void> deleteUser(int id) {
-        if(!userRepository.existsById(id)) {
+    public void deleteUser(int id) {
+        if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found: " + id);
         }
-
         userRepository.deleteById(id);
-        return CompletableFuture.completedFuture(null);
     }
 
+    @Async
+    @Transactional
+    public CompletableFuture<Boolean> existUserByEmail(String email) {
+        return CompletableFuture.completedFuture(userRepository.existsByEmail(email));
+    }
 
+    @Async
+    @Transactional
+    public CompletableFuture<UserDTO> getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+
+        return CompletableFuture.completedFuture(UserMapper.toDTO(user));
+    }
 }

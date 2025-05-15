@@ -7,6 +7,7 @@ import com.app.fineapp.mapper.OperationMapper;
 import com.app.fineapp.model.Account;
 import com.app.fineapp.model.enums.AccountType;
 import com.app.fineapp.repository.AccountRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,10 @@ public class AccountService {
     @Async
     @Transactional
     public CompletableFuture<AccountDTO> createAccount(AccountDTO accountDTO) {
+        if(accountRepository.existsById(accountDTO.getId())) {
+            throw new EntityExistsException("Account already exists: " + accountDTO.getId());
+        }
+
         Account acc = AccountMapper.toEntity(accountDTO);
         Account saved = accountRepository.save(acc);
 
@@ -96,6 +101,10 @@ public class AccountService {
                 .stream()
                 .map(OperationMapper::toDTO)
                 .collect(Collectors.toList());
+
+        if(ops.isEmpty()) {
+            throw new EntityNotFoundException("Operation not found in account: " + accountDTO.getId());
+        }
 
         return CompletableFuture.completedFuture(ops);
     }

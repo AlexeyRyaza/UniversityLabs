@@ -5,6 +5,7 @@ import java.util.List;
 public class UserDTO {
     private Integer id;
     private String username;
+    private String email;
     private String password;
     private List<Integer> accountIds;
     private List<Integer> categoryIds;
@@ -12,9 +13,10 @@ public class UserDTO {
     public UserDTO() {
     }
 
-    public UserDTO(Integer id, String username, String password, List<Integer> accountIds, List<Integer> categoryIds) {
+    public UserDTO(Integer id, String username, String email, String password, List<Integer> accountIds, List<Integer> categoryIds) {
         this.id = id;
         this.username = username;
+        this.email = email;
         this.password = password;
         this.accountIds = accountIds;
         this.categoryIds = categoryIds;
@@ -34,6 +36,13 @@ public class UserDTO {
     }
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

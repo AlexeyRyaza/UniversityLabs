@@ -24,6 +24,7 @@ public class UserMapper {
         return new UserDTO(
                 user.getId(),
                 user.getUsername(),
+                user.getEmail(),
                 user.getPassword(),
                 accountIds,
                 categoryIds
@@ -34,6 +35,7 @@ public class UserMapper {
         User user = new User();
         user.setId(userDTO.getId());
         user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
         user.setAccounts(accounts);
         user.setCategories(categories);

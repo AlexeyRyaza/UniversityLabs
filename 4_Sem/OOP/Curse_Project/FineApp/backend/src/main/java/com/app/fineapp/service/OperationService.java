@@ -11,6 +11,7 @@ import com.app.fineapp.model.Category;
 import com.app.fineapp.model.Operation;
 import com.app.fineapp.model.User;
 import com.app.fineapp.repository.OperationRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -53,12 +54,20 @@ public class OperationService {
                 .map(OperationMapper::toDTO)
                 .collect(Collectors.toList());
 
+        if (operations.isEmpty()) {
+            throw new EntityNotFoundException("Operation not found");
+        }
+
         return CompletableFuture.completedFuture(operations);
     }
 
     @Async
     @Transactional
     public CompletableFuture<OperationDTO> createOperation(OperationDTO operationDTO) {
+        if(operationRepository.existsById(operationDTO.getId())) {
+            throw new EntityExistsException("Operation already exists: " + operationDTO.getId());
+        }
+
         Account account = accountService.findEntityById((operationDTO.getAccountId()));
         Category category = categoryService.findEntityById((operationDTO.getCategoryId()));
 
@@ -98,10 +107,18 @@ public class OperationService {
     @Async
     @Transactional(readOnly = true)
     public CompletableFuture<List<OperationDTO>> getOperationsByAccount(AccountDTO account) {
+        if(accountService.findEntityById(account.getId()) == null) {
+            throw new EntityNotFoundException("Account not found: " + account.getId());
+        }
+
         List<OperationDTO> ops = operationRepository.findByAccount(AccountMapper.toEntity(account))
                 .stream()
                 .map(OperationMapper::toDTO)
                 .collect(Collectors.toList());
+
+        if(ops.isEmpty()) {
+            throw new EntityNotFoundException("Operation not found, Account id: " + account.getId());
+        }
 
         return CompletableFuture.completedFuture(ops);
     }
@@ -111,10 +128,19 @@ public class OperationService {
     public CompletableFuture<List<OperationDTO>> getMonthlyOperations(AccountDTO account) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = now.withDayOfMonth(1).toLocalDate().atStartOfDay();
+
+        if(accountService.findEntityById(account.getId()) == null) {
+            throw new EntityNotFoundException("Account not found: " + account.getId());
+        }
+
         List<OperationDTO> ops = operationRepository.findByAccountAndDateBetween(AccountMapper.toEntity(account), start, now)
                 .stream()
                 .map(OperationMapper::toDTO)
                 .collect(Collectors.toList());
+
+        if(ops.isEmpty()) {
+            throw new EntityNotFoundException("Operation not found, Account id: " + account.getId());
+        }
 
         return CompletableFuture.completedFuture(ops);
     }
@@ -124,12 +150,12 @@ public class OperationService {
     @Transactional(readOnly = true)
     public CompletableFuture<List<OperationDTO>> getOperationsForUser(UserDTO userDTO) {
         List<Account> accounts = accountService.findAllAccountsByIds(userDTO.getAccountIds());
-        List<Category> categories = categoryService.findAllCategoryByIds(userDTO.getCategoryIds());
 
-        User user = UserMapper.toEntity(userDTO, accounts , categories);
+        if(accounts.isEmpty()) {
+            throw new EntityNotFoundException("Account not found");
+        }
 
-        List<Account> accs = user.getAccounts();
-        List<OperationDTO> ops = operationRepository.findByAccountIn(accs)
+        List<OperationDTO> ops = operationRepository.findByAccountIn(accounts)
                 .stream()
                 .map(OperationMapper::toDTO)
                 .collect(Collectors.toList());

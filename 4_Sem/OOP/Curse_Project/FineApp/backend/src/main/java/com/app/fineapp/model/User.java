@@ -13,6 +13,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String username;
+    private String email;
     private String password;
 
     @OneToMany
@@ -37,6 +38,13 @@ public class User {
     }
     public Integer getId() {
         return id;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getEmail() {
+        return email;
     }
 
     public void setUsername(String username) {

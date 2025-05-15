@@ -4,6 +4,7 @@ import com.app.fineapp.dto.CategoryDTO;
 import com.app.fineapp.mapper.CategoryMapper;
 import com.app.fineapp.model.Category;
 import com.app.fineapp.repository.CategoryRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,10 @@ public class CategoryService {
                 .map(CategoryMapper::toDTO)
                 .collect(Collectors.toList());
 
+        if(categories.isEmpty()) {
+            throw new EntityNotFoundException("Category not found");
+        }
+
         return CompletableFuture.completedFuture(categories);
     }
 
@@ -42,10 +47,13 @@ public class CategoryService {
         return CompletableFuture.completedFuture(categoryDTO);
     }
 
-
     @Async
     @Transactional
     public CompletableFuture<CategoryDTO> createCategory(CategoryDTO category) {
+        if(categoryRepository.existsById(category.getId())){
+            throw new EntityExistsException("Category already exists: " + category.getId());
+        }
+
         Category cat = CategoryMapper.toEntity(category);
 
         var saved = categoryRepository.save(cat);
@@ -92,7 +100,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public Category findEntityById(int id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Account not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Category not found: " + id));
     }
 
     @Transactional(readOnly = true)

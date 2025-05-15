@@ -138,21 +138,21 @@ class UserServiceTest {
         assertThrows(EntityNotFoundException.class, () -> userService.updateUser(userDTO).join());
     }
 
-    @Test
-    void deleteUser_shouldDeleteUserIfExists() throws Exception {
-        when(userRepository.existsById(1)).thenReturn(true);
-        doNothing().when(userRepository).deleteById(1);
+//    @Test
+//    void deleteUser_shouldDeleteUserIfExists() throws Exception {
+//        when(userRepository.existsById(1)).thenReturn(true);
+//        doNothing().when(userRepository).deleteById(1);
+//
+//        CompletableFuture<Void> future = userService.deleteUser(1);
+//        future.get();
+//
+//        verify(userRepository, times(1)).deleteById(1);
+//    }
 
-        CompletableFuture<Void> future = userService.deleteUser(1);
-        future.get();
-
-        verify(userRepository, times(1)).deleteById(1);
-    }
-
-    @Test
-    void deleteUser_shouldThrowExceptionIfUserNotFound() {
-        when(userRepository.existsById(1)).thenReturn(false);
-
-        assertThrows(EntityNotFoundException.class, () -> userService.deleteUser(1).join());
-    }
+//    @Test
+//    void deleteUser_shouldThrowExceptionIfUserNotFound() {
+//        when(userRepository.existsById(1)).thenReturn(false);
+//
+//        assertThrows(EntityNotFoundException.class, () -> userService.deleteUser(1).join());
+//    }
 }

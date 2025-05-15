@@ -1,50 +1,46 @@
 package com.app.fineapp.controller;
 
-import ch.qos.logback.core.testUtil.XTeeOutputStream;
 import com.app.fineapp.dto.CategoryDTO;
-import com.app.fineapp.model.Category;
 import com.app.fineapp.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
+@RequestMapping("/categories")
 public final class CategoryController {
-    CategoryService categoryService;
+    private final CategoryService categoryService;
 
     @Autowired
-    CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("http://localhost:8080/api/categories")
+    @GetMapping
     public CompletableFuture<List<CategoryDTO>> getOperations() {
         return categoryService.getAllCategories();
     }
-    @GetMapping("/categories/{id}")
+
+    @GetMapping("/{id}")
     public CompletableFuture<CategoryDTO> getCategoryById(@PathVariable int id) {
         return categoryService.getCategoryById(id);
     }
 
-    @PostMapping("/categories")
+    @PostMapping
     public CompletableFuture<CategoryDTO> createCategory(@RequestBody CategoryDTO category) {
         return categoryService.createCategory(category);
     }
 
-    @PutMapping("/categories")
+    @PutMapping
     public CompletableFuture<CategoryDTO> updateCategory(@RequestBody CategoryDTO category) {
         return categoryService.updateCategory(category);
     }
 
-    @DeleteMapping("/categories/{id}")
+    @DeleteMapping("/{id}")
     public CompletableFuture<Void> deleteCategory(@PathVariable int id) {
         return categoryService.deleteCategory(id);
-    }
-
-    @GetMapping("api/test")
-    public String test() {
-        return "test";
     }
 }

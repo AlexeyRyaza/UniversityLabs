@@ -2,7 +2,9 @@ package com.app.fineapp.controller;
 
 import com.app.fineapp.dto.AccountDTO;
 import com.app.fineapp.service.AccountService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,10 +12,10 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 public final class AccountController {
-    AccountService accountService;
+    private final AccountService accountService;
 
     @Autowired
-    AccountController(AccountService accountService) {
+    public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
