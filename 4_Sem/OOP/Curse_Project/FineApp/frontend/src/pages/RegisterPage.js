@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, TextField, Container, Typography, Box, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { validatePasswordMatch } from '../utils/validationService';
+import { checkEmailExists } from '../api/authService';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -29,18 +30,33 @@ export default function RegisterPage() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const passwordError = validatePasswordMatch(formData.password, formData.confirm);
-    if (passwordError) {
-      setErrors((prev) => ({ ...prev, passwordMatch: passwordError }));
-      return;
+  const passwordError = validatePasswordMatch(formData.password, formData.confirm);
+  if (passwordError) {
+    setErrors((prev) => ({ ...prev, passwordMatch: passwordError }));
+    return;
+  }
+
+  try {
+    const exists = await checkEmailExists(formData.email);
+    if (exists) {
+      alert('Пользователь с таким email уже существует');
+    } else {
+      navigate('/register/username', {
+        state: {
+          email: formData.email,
+          password: formData.password
+        }
+      });
     }
+  } catch (error) {
+    alert(error.message);
+  }
+};
 
-    // TODO: отправить запрос на бэкенд
-    console.log("Регистрация:", formData);
-  };
+
 
   return (
     <Container maxWidth="xs">

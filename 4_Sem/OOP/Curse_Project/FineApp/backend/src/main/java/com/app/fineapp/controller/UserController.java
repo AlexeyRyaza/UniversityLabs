@@ -5,7 +5,6 @@ import com.app.fineapp.dto.AccountDTO;
 import com.app.fineapp.dto.CategoryDTO;
 import com.app.fineapp.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +30,8 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping("/{email}")
-    public CompletableFuture<UserDTO> getUserById(@PathVariable String email) {
+    @GetMapping("/get/{email}")
+    public CompletableFuture<UserDTO> getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email);
     }
 

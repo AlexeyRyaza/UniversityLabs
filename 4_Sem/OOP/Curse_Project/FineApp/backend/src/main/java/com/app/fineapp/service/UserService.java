@@ -16,9 +16,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,13 +94,11 @@ public class UserService {
     @Async
     @Transactional
     public CompletableFuture<UserDTO> createUser(UserDTO userDTO) {
-        if(userRepository.existsById(userDTO.getId())){
-            throw new EntityExistsException("User already exists: " + userDTO.getId());
+        if(userRepository.existsByEmail(userDTO.getEmail())){
+            throw new EntityExistsException("User already exists: " + userDTO.getEmail());
         }
-        List<Account> accounts = accountService.findAllAccountsByIds(userDTO.getAccountIds());
-        List<Category> categories = categoryService.findAllCategoryByIds(userDTO.getCategoryIds());
 
-        User user = UserMapper.toEntity(userDTO, accounts, categories);
+        User user = UserMapper.toEntity(userDTO, new ArrayList<Account>(), new ArrayList<Category>());
         userRepository.save(user);
         return CompletableFuture.completedFuture(UserMapper.toDTO(user));
     }
@@ -141,5 +139,23 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
 
         return CompletableFuture.completedFuture(UserMapper.toDTO(user));
+    }
+
+    @Async
+    @Transactional
+    public CompletableFuture<UserDTO> getUserByEmailAndPassword(String email, String password) {
+        User user =  userRepository.findByEmailAndPassword(email, password).
+                orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+
+        return  CompletableFuture.completedFuture(UserMapper.toDTO(user));
+    }
+
+
+    @Transactional
+    public UserDTO findUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+
+        return UserMapper.toDTO(user);
     }
 }
