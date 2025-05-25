@@ -12,10 +12,14 @@ import com.app.fineapp.model.Category;
 import com.app.fineapp.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -26,13 +30,26 @@ public class UserService {
     private final UserRepository userRepository;
     private final AccountService accountService;
     private final CategoryService categoryService;
+    private final RedisService redisService;
 
+    @Autowired
     public UserService(UserRepository userRepository,
                        AccountService accountService,
-                       CategoryService categoryService) {
+                       CategoryService categoryService,
+                       RedisService redisService) {
         this.userRepository = userRepository;
         this.accountService = accountService;
         this.categoryService = categoryService;
+        this.redisService = redisService;
+    }
+
+    @Async
+    @Transactional(readOnly = true)
+    @Cacheable(value = "users", key = "#id")
+    public CompletableFuture<UserDTO> getUserByIdWithCache(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
+        return CompletableFuture.completedFuture(UserMapper.toDTO(user));
     }
 
     @Async
@@ -133,12 +150,26 @@ public class UserService {
     }
 
     @Async
-    @Transactional
-    public CompletableFuture<UserDTO> getUserByEmail(String email) {
+    @Transactional(readOnly = true)
+    public CompletableFuture<UserDTO> findUserByEmailWithCache(String email) {
+        String key = "user:email:" + email;
+
+        try{
+            UserDTO cachedUser = redisService.get(key, UserDTO.class);
+            if (cachedUser != null) {
+                return CompletableFuture.completedFuture(cachedUser);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
 
-        return CompletableFuture.completedFuture(UserMapper.toDTO(user));
+        UserDTO dto = UserMapper.toDTO(user);
+        redisService.save(key, dto, 600);
+
+        return CompletableFuture.completedFuture(dto);
     }
 
     @Async

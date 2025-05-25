@@ -45,7 +45,6 @@ export const loginUser = async (credentials) => {
 
     localStorage.setItem('jwtToken', token);
     localStorage.setItem('currentUser', JSON.stringify(user));
-
     // 3. Сохраняем пользователя
     await axios.post(`${BASE_URL}/auth/save-user`, user);
 
@@ -80,7 +79,7 @@ export const isAuthenticated = () => !!localStorage.getItem('jwtToken');
 
 
 export const logout = async () => {
-  try {
+  try { 
     // Вызываем серверный logout (DELETE сессии / удаление авторизации)
     await axios.post(`${BASE_URL}/auth/logout`);
   } catch (error) {

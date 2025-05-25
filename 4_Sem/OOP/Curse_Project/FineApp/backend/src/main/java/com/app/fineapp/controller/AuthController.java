@@ -52,7 +52,8 @@ public class AuthController {
     @PostMapping("/login")
     public CompletableFuture<ResponseEntity<Map<String, Object>>> login(@RequestBody AuthRequest request) {
         return CompletableFuture.supplyAsync(() -> {
-            UserDTO user = userService.findUserByEmail(request.getEmail());
+            UserDTO user = userService.findUserByEmailWithCache(request.getEmail()).join();
+
             if(user == null){
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }

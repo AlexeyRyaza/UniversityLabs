@@ -25,13 +25,13 @@ class UserServiceTest {
     private CategoryService categoryService;
     private UserService userService;
 
-    @BeforeEach
-    void setUp() {
-        userRepository = mock(UserRepository.class);
-        accountService = mock(AccountService.class);
-        categoryService = mock(CategoryService.class);
-        userService = new UserService(userRepository, accountService, categoryService);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        userRepository = mock(UserRepository.class);
+//        accountService = mock(AccountService.class);
+//        categoryService = mock(CategoryService.class);
+//        userService = new UserService(userRepository, accountService, categoryService);
+//    }
 
     @Test
     void getAllUsers_shouldReturnList() throws Exception {

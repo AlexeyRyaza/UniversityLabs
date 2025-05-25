@@ -27,12 +27,13 @@ public class UserController {
 
     @GetMapping("/{id}")
     public CompletableFuture<UserDTO> getUserById(@PathVariable int id) {
-        return userService.getUserById(id);
+        //return userService.getUserById(id);
+        return userService.getUserByIdWithCache(id);
     }
 
     @GetMapping("/get/{email}")
     public CompletableFuture<UserDTO> getUserByEmail(@PathVariable String email) {
-        return userService.getUserByEmail(email);
+        return userService.findUserByEmailWithCache(email);
     }
 
     @GetMapping("/{id}/accounts")
