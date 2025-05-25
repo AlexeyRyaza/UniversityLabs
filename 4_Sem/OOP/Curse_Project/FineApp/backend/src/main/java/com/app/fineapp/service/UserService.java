@@ -158,4 +158,12 @@ public class UserService {
 
         return UserMapper.toDTO(user);
     }
+
+    @Transactional
+    public UserDTO findUserById(int id) {
+        User user = userRepository.findById(id).
+                orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
+
+        return UserMapper.toDTO(user);
+    }
 }

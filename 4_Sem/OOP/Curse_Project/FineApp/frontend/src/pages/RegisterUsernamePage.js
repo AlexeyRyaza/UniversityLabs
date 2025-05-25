@@ -1,8 +1,10 @@
-// src/pages/RegisterUsernamePage.jsx
 import React, { useState } from 'react';
 import { Button, TextField, Container, Typography, Box } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { registerUser } from '../api/authService';
+
+const BASE_URL = 'http://localhost:8080';
 
 export default function RegisterUsernamePage() {
   const [username, setUsername] = useState('');
@@ -15,12 +17,15 @@ export default function RegisterUsernamePage() {
     e.preventDefault();
     try {
       const response = await registerUser({ email, password, username });
-      alert("2");
-
-      // ✅ Предполагается, что backend возвращает токен
       const token = response.token;
+      const user = response.user;
+
       if (token) {
         localStorage.setItem('jwtToken', token);
+
+        // ✅ Сохраняем пользователя после регистрации
+        await axios.post(`${BASE_URL}/auth/save-user`, user);
+
         navigate('/home');
       } else {
         alert('Регистрация прошла, но токен не получен');

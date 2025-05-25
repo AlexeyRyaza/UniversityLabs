@@ -1,0 +1,32 @@
+.bottom-nav {
+  /* position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  background-color: #f0f0f0;
+  border-top: 1px solid #ccc; */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10; /* меньше чем у AccountModal */
+  background: #fff;
+  border-top: 1px solid #ddd;
+  padding: 12px 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+.bottom-nav button {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  background: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.bottom-nav button.active {
+  background-color: #ddd;
+  font-weight: bold;
+}

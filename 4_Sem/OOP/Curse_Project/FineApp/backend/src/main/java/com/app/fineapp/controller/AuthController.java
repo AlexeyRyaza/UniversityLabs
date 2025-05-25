@@ -3,6 +3,7 @@ package com.app.fineapp.controller;
 import com.app.fineapp.dto.AuthRequest;
 import com.app.fineapp.dto.UserDTO;
 import com.app.fineapp.security.jwt.JwtService;
+import com.app.fineapp.service.AutoAuthService;
 import com.app.fineapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,11 +18,35 @@ import java.util.concurrent.CompletableFuture;
 public class AuthController {
     private final JwtService jwtService;
     private final UserService userService;
+    private final AutoAuthService authService;
 
     @Autowired
-    public AuthController(JwtService jwtService, UserService userService) {
+    public AuthController(JwtService jwtService, UserService userService, AutoAuthService authService) {
         this.jwtService = jwtService;
         this.userService = userService;
+        this.authService = authService;
+    }
+
+    @PostMapping("/auto-login")
+    public CompletableFuture<ResponseEntity<Map<String, Object>>> tryAutoLogin() {
+        return authService.isUserExist()
+                .thenCompose(exists -> {
+                    if (!exists) {
+                        return CompletableFuture.completedFuture(null);
+                    }
+                    return authService.getUserFromFile()
+                            .thenCompose(user -> login(new AuthRequest(user.getEmail(), user.getPassword())));
+                });
+    }
+
+    @PostMapping("/logout")
+    public CompletableFuture<Void> logout() {
+        return authService.deleteAuthorizedUser();
+    }
+
+    @PostMapping("/save-user")
+    public CompletableFuture<Void> saveUser(@RequestBody UserDTO user) {
+        return authService.saveAuthorizedUser(user);
     }
 
     @PostMapping("/login")

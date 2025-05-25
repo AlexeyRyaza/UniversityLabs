@@ -20,5 +20,11 @@ public class AuthRequest {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public AuthRequest() {}
+    public AuthRequest(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }
 

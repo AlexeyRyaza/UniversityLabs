@@ -1,13 +1,22 @@
 // src/pages/LoginPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, TextField, Container, Typography, Box, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../api/authService';
+import { loginUser, autoLogin } from '../api/authService';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      const result = await autoLogin();
+      if (result) {
+        navigate('/home');
+      }
+    })();
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

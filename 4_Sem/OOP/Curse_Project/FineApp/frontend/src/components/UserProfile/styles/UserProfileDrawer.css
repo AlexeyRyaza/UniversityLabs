@@ -1,0 +1,111 @@
+.profile-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 2000;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.profile-drawer {
+  width: 80%;
+  max-width: 320px;
+  height: 100%;
+  background: #fff;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  animation: slideInRight 0.3s ease-out;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-header {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.profile-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: flex-start; /* контент сверху */
+}
+
+.profile-content button {
+  padding: 10px;
+  font-size: 16px;
+  border: black;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sign-out-button {
+  margin-top: auto;
+  background-color: grey;
+  color: white;
+}
+
+.delete-button {
+  background-color: #f28b82;
+  color: white;
+  margin-bottom: 40px;
+}
+
+/* Анимации */
+.slide-in {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.slide-out {
+  animation: slideOutRight 0.3s ease-in forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.profile-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px; /* сдвиг вниз относительно заголовка */
+  margin-bottom: 40px; /* увеличенный отступ под иконкой */
+}
+
+.profile-icon {
+  margin-top: 5%;
+  font-size: 250px; /* увеличиваем размер */
+  color: #4285f4;
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+

@@ -11,14 +11,43 @@ export const checkEmailExists = async (email) => {
   }
 };
 
+export const autoLogin = async () => {
+  try {
+    const autoLoginResponse = await axios.post(`${BASE_URL}/auth/auto-login`);
+    const autoData = autoLoginResponse?.data;
+
+    if (autoData && autoData.token && autoData.user) {
+      localStorage.setItem('jwtToken', autoData.token);
+      localStorage.setItem('currentUser', JSON.stringify(autoData.user));
+      return { token: autoData.token, user: autoData.user };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
 export const loginUser = async (credentials) => {
   try {
+    // 1. Пытаемся авто-логиниться
+    const autoLoginResponse = await axios.post(`${BASE_URL}/auth/auto-login`);
+    const autoData = autoLoginResponse?.data;
+
+    if (autoData && autoData.token && autoData.user) {
+      localStorage.setItem('jwtToken', autoData.token);
+      localStorage.setItem('currentUser', JSON.stringify(autoData.user));
+      return { token: autoData.token, user: autoData.user };
+    }
+
+    // 2. Если авто-логин не сработал — обычный логин
     const response = await axios.post(`${BASE_URL}/auth/login`, credentials);
     const { token, user } = response.data;
 
-    // Сохраняем JWT и данные пользователя
     localStorage.setItem('jwtToken', token);
     localStorage.setItem('currentUser', JSON.stringify(user));
+
+    // 3. Сохраняем пользователя
+    await axios.post(`${BASE_URL}/auth/save-user`, user);
 
     return { token, user };
   } catch (error) {
@@ -46,3 +75,20 @@ export const registerUser = async (user) => {
   }
 };
 
+
+export const isAuthenticated = () => !!localStorage.getItem('jwtToken');
+
+
+export const logout = async () => {
+  try {
+    // Вызываем серверный logout (DELETE сессии / удаление авторизации)
+    await axios.post(`${BASE_URL}/auth/logout`);
+  } catch (error) {
+    console.error('Ошибка при logout:', error);
+    // Можно проигнорировать ошибку, чтобы logout все равно очистил localStorage
+  } finally {
+    // Чистим localStorage в любом случае
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('currentUser');
+  }
+};

@@ -1,0 +1,22 @@
+.accounts-tab {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  height: 100%; /* занимает всё пространство tab-content */
+}
+
+.accounts-header {
+  flex-shrink: 0;
+  padding: 16px;
+  background-color: #f0f0f0;
+}
+
+.accounts-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px 80px; /* нижний паддинг под кнопку/навигацию */
+  box-sizing: border-box;
+  max-height: 400px;
+  background-color: antiquewhite;
+}

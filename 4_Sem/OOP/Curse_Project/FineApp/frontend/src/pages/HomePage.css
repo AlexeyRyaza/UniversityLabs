@@ -1,0 +1,35 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Важно! Заполняет всю высоту экрана */
+  overflow: hidden;
+}
+
+.total-balance {
+  background-color: #ffffff;
+  padding: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+}
+
+.tab-content {
+  padding: 20px;
+  flex: 1;
+  overflow: hidden; /* чтобы прокручивалось только внутри контента, если нужно */
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  z-index: 2000; /* выше всего */
+  overflow-y: auto;
+  padding: 20px;
+}
