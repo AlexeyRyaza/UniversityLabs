@@ -1,0 +1,74 @@
+.transfer-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.transfer-modal {
+  background-color: white;
+  border-radius: 10px;
+  padding: 24px 32px;
+  width: 320px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transfer-modal h3 {
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.transfer-modal label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.transfer-modal select,
+.transfer-modal input[type="number"],
+.transfer-modal input[type="text"] {
+  padding: 8px 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.transfer-modal select:focus,
+.transfer-modal input[type="number"]:focus,
+.transfer-modal input[type="text"]:focus {
+  border-color: #3f51b5;
+}
+
+.transfer-add-btn {
+  margin-top: 16px;
+  padding: 10px 0;
+  background-color: #3f51b5;
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.transfer-add-btn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.transfer-add-btn:not(:disabled):hover {
+  background-color: #303f9f;
+}

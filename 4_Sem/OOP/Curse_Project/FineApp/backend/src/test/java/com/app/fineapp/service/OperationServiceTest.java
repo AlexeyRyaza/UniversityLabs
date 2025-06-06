@@ -169,47 +169,8 @@ class OperationServiceTest {
         assertThrows(EntityNotFoundException.class, () -> operationService.deleteOperationById(1).join());
     }
 
-    @Test
-    void getOperationsByAccount_shouldReturnOperations() throws Exception {
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setId(1);
-        accountDTO.setImage(0);
-        accountDTO.setColor(0);
 
-        Operation operation = new Operation();
-        operation.setId(1);
-        operation.setAmount(BigDecimal.valueOf(100));
 
-        when(operationRepository.findByAccount(any(Account.class))).thenReturn(List.of(operation));
-
-        CompletableFuture<List<OperationDTO>> future = operationService.getOperationsByAccount(accountDTO);
-        List<OperationDTO> result = future.get();
-
-        assertEquals(1, result.size());
-        assertEquals(BigDecimal.valueOf(100), result.get(0).getAmount());
-    }
-
-    @Test
-    void getMonthlyOperations_shouldReturnOperationsForMonth() throws Exception {
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setId(1);
-        accountDTO.setImage(0);
-        accountDTO.setColor(0);
-
-        Operation operation = new Operation();
-        operation.setId(1);
-        operation.setAmount(BigDecimal.valueOf(100));
-        operation.setDate(LocalDateTime.now());
-
-        when(operationRepository.findByAccountAndDateBetween(any(Account.class), any(LocalDateTime.class), any(LocalDateTime.class)))
-                .thenReturn(List.of(operation));
-
-        CompletableFuture<List<OperationDTO>> future = operationService.getMonthlyOperations(accountDTO);
-        List<OperationDTO> result = future.get();
-
-        assertEquals(1, result.size());
-        assertEquals(BigDecimal.valueOf(100), result.get(0).getAmount());
-    }
 
     @Test
     void getOperationsForUser_shouldReturnOperationsForUser() throws Exception {

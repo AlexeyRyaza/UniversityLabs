@@ -1,0 +1,30 @@
+.category-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.category-column {
+  width: 48%;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.category-sum {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

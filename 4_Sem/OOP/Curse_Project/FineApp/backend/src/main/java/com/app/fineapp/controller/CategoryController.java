@@ -20,7 +20,7 @@ public final class CategoryController {
     }
 
     @GetMapping
-    public CompletableFuture<List<CategoryDTO>> getOperations() {
+    public CompletableFuture<List<CategoryDTO>> getAllCategories() {
         return categoryService.getAllCategories();
     }
 
